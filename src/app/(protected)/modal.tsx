@@ -1,7 +1,6 @@
 import { ScrollView } from "react-native";
-import { AppText } from "../components/AppText";
+import { AppText } from "@/components/AppText";
 
-// For deep linking to ensure the (tabs) is rendered in the background
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };

@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import { Box } from "../../components/Box";
+import { Box } from "@/components/Box";
 
 export default function Second() {
   return (

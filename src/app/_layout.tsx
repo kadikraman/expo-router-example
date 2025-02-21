@@ -1,14 +1,33 @@
-import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { SplashScreen, Stack } from "expo-router";
 import "../../global.css";
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    // Adding a delay to simulate async setup, e.g. fetching auth state
+    setTimeout(() => {
+      setIsReady(true);
+      SplashScreen.hideAsync();
+    }, 3000);
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
+
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       <Stack.Screen
-        name="modalStack"
-        options={{ presentation: "modal", headerShown: false }}
+        name="(protected)"
+        options={{ animation: "none", headerShown: false }}
+      />
+      <Stack.Screen
+        name="login"
+        options={{ animation: "none", headerShown: false }}
       />
     </Stack>
   );
