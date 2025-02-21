@@ -18,7 +18,7 @@ export default function LoginScreen() {
         Login
       </AppText>
       <AppText center className="mb-8">
-        Now "log in" to your account to continue.
+        "Log in" to your account to continue.
       </AppText>
       <Button title="Login" onPress={handleLogin} />
     </View>

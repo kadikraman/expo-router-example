@@ -28,6 +28,7 @@ export default function TabsLayout() {
         name="third"
         options={{
           title: "Third",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="balloon-sharp" color={color} size={size} />
           ),

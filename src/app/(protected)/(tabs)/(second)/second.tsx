@@ -9,7 +9,7 @@ export default function Second() {
   return (
     <ScrollView contentContainerClassName="p-4">
       <Button
-        title="Open Shared Page"
+        title="Open a shared page"
         theme="secondary"
         onPress={() => router.push("/shared")}
       />

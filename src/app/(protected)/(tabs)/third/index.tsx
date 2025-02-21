@@ -1,9 +1,16 @@
 import { ScrollView } from "react-native";
 import { Box } from "@/components/Box";
+import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
 
-export default function Second() {
+export default function Third() {
+  const router = useRouter();
   return (
     <ScrollView contentContainerClassName="p-4">
+      <Button
+        title="Navigate within this tab "
+        onPress={() => router.push("/third/inner")}
+      />
       <Box text="Item 1" color="pink" size="small" />
       <Box text="Item 2" color="pink" size="small" />
       <Box text="Item 3" color="pink" size="small" />

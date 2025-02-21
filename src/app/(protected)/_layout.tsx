@@ -1,6 +1,10 @@
 import { Stack, Redirect } from "expo-router";
 import { useAppState } from "@/utils/state";
 
+export const unstable_settings = {
+  initialRouteName: "(tabs)",
+};
+
 export default function LoggedInLayout() {
   const [appState] = useAppState();
 
