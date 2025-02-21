@@ -13,6 +13,11 @@ export default function Second() {
         theme="secondary"
         onPress={() => router.push("/shared")}
       />
+      <Button
+        title='Open "products/item-1"'
+        theme="secondary"
+        onPress={() => router.push("/products/item-1")}
+      />
       <Box text="Item 1" color="blue" />
       <Box text="Item 2" color="blue" />
       <Box text="Item 3" color="blue" />

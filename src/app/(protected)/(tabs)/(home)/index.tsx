@@ -16,6 +16,11 @@ export default function Home() {
         theme="secondary"
         onPress={() => router.push("/shared")}
       />
+      <Button
+        title='Open "products/item-1"'
+        theme="secondary"
+        onPress={() => router.push("/products/item-1")}
+      />
       <Box text="Item 1" size="large" />
       <Box text="Item 2" size="large" />
       <Box text="Item 3" size="large" />

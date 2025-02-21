@@ -20,7 +20,7 @@ export const Button = React.forwardRef<
       className={cn(
         "flex-row items-center justify-center rounded-md px-6 py-4 mb-4",
         theme === "primary" && "bg-black",
-        theme === "secondary" && "bg-white border border-black",
+        theme === "secondary" && "bg-white border border-gray-300",
         theme === "tertiary" && "bg-transparent",
         disabled && "opacity-50",
       )}
@@ -28,7 +28,7 @@ export const Button = React.forwardRef<
     >
       <Text
         className={cn(
-          "font-semibold text-lg uppercase tracking-wider",
+          "font-semibold text-lg tracking-wider",
           theme === "secondary" && "text-black",
           theme === "primary" && "text-white",
           theme === "tertiary" && "text-gray-800",
