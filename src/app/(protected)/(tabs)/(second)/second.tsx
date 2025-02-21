@@ -1,9 +1,18 @@
 import { ScrollView } from "react-native";
 import { Box } from "@/components/Box";
+import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
 
 export default function Second() {
+  const router = useRouter();
+
   return (
     <ScrollView contentContainerClassName="p-4">
+      <Button
+        title="Open Shared Page"
+        theme="secondary"
+        onPress={() => router.push("/shared")}
+      />
       <Box text="Item 1" color="blue" />
       <Box text="Item 2" color="blue" />
       <Box text="Item 3" color="blue" />

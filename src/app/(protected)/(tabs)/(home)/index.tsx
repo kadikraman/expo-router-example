@@ -8,8 +8,13 @@ export default function Home() {
   return (
     <ScrollView contentContainerClassName="p-4">
       <Button
-        title="Open Details"
+        title="Navigate within tab "
         onPress={() => router.push("/details", { relativeToDirectory: true })}
+      />
+      <Button
+        title="Open Shared Page"
+        theme="secondary"
+        onPress={() => router.push("/shared")}
       />
       <Box text="Item 1" size="large" />
       <Box text="Item 2" size="large" />

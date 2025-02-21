@@ -5,6 +5,7 @@ export default function HomeLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ title: "Home" }} />
       <Stack.Screen name="details" options={{ title: "Details" }} />
+      <Stack.Screen name="shared" options={{ title: "Shared page (home)" }} />
     </Stack>
   );
 }

@@ -15,9 +15,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="second"
+        name="(second)"
         options={{
           title: "Second",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="albums" color={color} size={size} />
           ),
