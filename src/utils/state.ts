@@ -6,6 +6,7 @@ const storage = createJSONStorage(() => AsyncStorage) as any;
 
 const content = {
   isLoggedIn: false,
+  hasCompletedOnboarding: false,
 };
 
 const appStateAtom = atomWithStorage<typeof content>(

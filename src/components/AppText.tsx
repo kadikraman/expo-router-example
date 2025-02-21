@@ -7,6 +7,7 @@ type AppTextProps = {
   bold?: boolean;
   color?: "primary" | "secondary" | "tertiary";
   center?: boolean;
+  className?: string;
 };
 
 export function AppText({
@@ -15,6 +16,7 @@ export function AppText({
   bold = false,
   color = "primary",
   center = false,
+  className,
 }: AppTextProps) {
   return (
     <Text
@@ -28,6 +30,7 @@ export function AppText({
         color === "secondary" && "text-gray-500",
         color === "tertiary" && "text-gray-400",
         center && "text-center",
+        className,
       )}
     >
       {children}

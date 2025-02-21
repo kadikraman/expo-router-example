@@ -29,6 +29,10 @@ export default function RootLayout() {
         name="login"
         options={{ animation: "none", headerShown: false }}
       />
+      <Stack.Screen
+        name="onboarding"
+        options={{ animation: "none", headerShown: false }}
+      />
     </Stack>
   );
 }

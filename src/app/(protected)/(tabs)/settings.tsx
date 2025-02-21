@@ -1,11 +1,32 @@
-import { ScrollView } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
 import { useAppState } from "@/utils/state";
 
 export default function Settings() {
-  const [, setAppState] = useAppState();
+  const [appState, setAppState] = useAppState();
   const router = useRouter();
+
+  const confirmReset = () => {
+    Alert.alert(
+      "Are you sure you want to reset app state?",
+      "This will reset onboarding and log you out",
+      [
+        {
+          text: "Yes",
+          onPress: () => {
+            setAppState({
+              isLoggedIn: false,
+              hasCompletedOnboarding: false,
+            });
+            router.replace("/onboarding");
+          },
+          style: "destructive",
+        },
+        { text: "Cancel", style: "cancel" },
+      ],
+    );
+  };
 
   return (
     <ScrollView contentContainerClassName="p-4">
@@ -24,10 +45,11 @@ export default function Settings() {
       <Button
         title="Logout"
         onPress={() => {
-          setAppState({ isLoggedIn: false });
+          setAppState({ ...appState, isLoggedIn: false });
           router.replace("/login");
         }}
       />
+      <Button title="Reset app state" onPress={confirmReset} />
     </ScrollView>
   );
 }

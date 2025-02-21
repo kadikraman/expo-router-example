@@ -3,6 +3,7 @@ import { AppText } from "@/components/AppText";
 import { Button } from "@/components/Button";
 import { Link } from "expo-router";
 import { useRouter } from "expo-router";
+
 // For deep linking to ensure the (tabs) is rendered in the background
 export const unstable_settings = {
   initialRouteName: "(tabs)",
