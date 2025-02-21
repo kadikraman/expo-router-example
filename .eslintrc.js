@@ -6,4 +6,7 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
   },
+  "import/resolver": {
+    typescript: {},
+  },
 };

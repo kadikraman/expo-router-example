@@ -1,9 +1,16 @@
 import { ScrollView } from "react-native";
 import { Box } from "@/components/Box";
-
+import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
 export default function Home() {
+  const router = useRouter();
+
   return (
     <ScrollView contentContainerClassName="p-4">
+      <Button
+        title="Open Details"
+        onPress={() => router.push("/details", { relativeToDirectory: true })}
+      />
       <Box text="Item 1" size="large" />
       <Box text="Item 2" size="large" />
       <Box text="Item 3" size="large" />
