@@ -14,7 +14,7 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 items-center justify-center">
-      <AppText size="xlarge" center bold>
+      <AppText size="heading" center bold>
         Login
       </AppText>
       <AppText center className="mb-8">

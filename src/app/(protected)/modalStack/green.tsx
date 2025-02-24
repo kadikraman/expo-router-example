@@ -1,4 +1,4 @@
-import { ScrollView } from "react-native";
+import { View } from "react-native";
 import { Button } from "@/components/Button";
 import { Link } from "expo-router";
 import { useRouter } from "expo-router";
@@ -11,7 +11,7 @@ export default function GreenScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView contentContainerClassName="p-4 bg-green-200 flex-1">
+    <View className="p-4 bg-green-200 flex-1 justify-center">
       <Link href="/modalStack" asChild push>
         <Button theme="secondary" title='Open "Index screen"' />
       </Link>
@@ -24,6 +24,6 @@ export default function GreenScreen() {
         onPress={() => router.back()}
         disabled={!router.canGoBack()}
       />
-    </ScrollView>
+    </View>
   );
 }

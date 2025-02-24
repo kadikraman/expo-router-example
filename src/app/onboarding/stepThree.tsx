@@ -15,7 +15,7 @@ export default function OnboardingStepThreeScreen() {
 
   return (
     <View className="flex-1 items-center justify-center m-4">
-      <AppText size="xlarge" center bold>
+      <AppText size="heading" center bold>
         Final step
       </AppText>
       <AppText center className="mb-8">

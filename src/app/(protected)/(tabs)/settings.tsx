@@ -1,4 +1,4 @@
-import { Alert, ScrollView } from "react-native";
+import { Alert, View } from "react-native";
 import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
 import { useAppState } from "@/utils/state";
@@ -29,7 +29,7 @@ export default function Settings() {
   };
 
   return (
-    <ScrollView contentContainerClassName="p-4">
+    <View className="p-4 flex-1 justify-center">
       <Button
         title="Open modal"
         onPress={() => {
@@ -50,6 +50,6 @@ export default function Settings() {
         }}
       />
       <Button title="Reset app state" onPress={confirmReset} />
-    </ScrollView>
+    </View>
   );
 }

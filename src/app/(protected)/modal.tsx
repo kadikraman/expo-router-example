@@ -8,7 +8,7 @@ export const unstable_settings = {
 export default function Modal() {
   return (
     <ScrollView contentContainerClassName="p-4">
-      <AppText size="xlarge" bold center>
+      <AppText size="heading" bold center>
         Simple one-screen modal
       </AppText>
       <AppText size="medium" center>

@@ -8,7 +8,7 @@ export default function OnboardingScreen() {
 
   return (
     <View className="flex-1 items-center justify-center m-4">
-      <AppText size="xlarge" center bold>
+      <AppText size="heading" center bold>
         This is the onboarding screen
       </AppText>
       <AppText center className="mb-8">

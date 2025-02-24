@@ -20,7 +20,7 @@ export default function TabsLayout() {
           title: "Second",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="albums" color={color} size={size} />
+            <Ionicons name="flower" color={color} size={size} />
           ),
         }}
       />

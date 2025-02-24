@@ -18,10 +18,10 @@ export const Button = React.forwardRef<
       ref={ref}
       onPress={onPress}
       className={cn(
-        "flex-row items-center justify-center rounded-md px-6 py-4 mb-4",
-        theme === "primary" && "bg-black",
-        theme === "secondary" && "bg-white border border-gray-300",
-        theme === "tertiary" && "bg-transparent",
+        "flex-row items-center justify-center rounded-md px-5 py-3 mb-4 border",
+        theme === "primary" && "bg-[#007AFF] border-[#007AFF]",
+        theme === "secondary" && "bg-white border-gray-300",
+        theme === "tertiary" && "bg-transparent border-transparent",
         disabled && "opacity-50",
       )}
       disabled={disabled}

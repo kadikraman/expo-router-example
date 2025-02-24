@@ -8,7 +8,7 @@ export default function OnboardingStepTwoScreen() {
 
   return (
     <View className="flex-1 items-center justify-center m-4">
-      <AppText size="xlarge" center bold>
+      <AppText size="heading" center bold>
         Step 2
       </AppText>
       <AppText center className="mb-8">
