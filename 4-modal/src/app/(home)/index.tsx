@@ -1,11 +1,13 @@
-import { Alert, View } from "react-native";
+import { Alert, View, Modal } from "react-native";
 import { AppText } from "@/components/AppText";
 import { Link, useRouter } from "expo-router";
 import { Button } from "@/components/Button";
+import { useState } from "react";
 
 export default function IndexScreen() {
   const router = useRouter();
   const canGoBack = router.canGoBack();
+  const [modalVisible, setModalVisible] = useState(false);
 
   // https://reactnative.dev/docs/alert
   const handleOpenAlert = () => {
@@ -44,6 +46,36 @@ export default function IndexScreen() {
         theme="secondary"
         onPress={() => handleOpenAlert()}
       />
+      <Button
+        title="Open Modal"
+        theme="secondary"
+        onPress={() => setModalVisible(true)}
+      />
+      {/* https://reactnative.dev/docs/modal */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        // presentationStyle="pageSheet"
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View className="flex-1 items-center justify-center">
+          <View className="p-12 rounded-lg bg-white">
+            <AppText center size="heading">
+              A custom styled modal!
+            </AppText>
+            <Button
+              title="Close"
+              theme="secondary"
+              onPress={() => {
+                setModalVisible(false);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
