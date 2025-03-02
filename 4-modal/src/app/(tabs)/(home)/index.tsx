@@ -47,10 +47,16 @@ export default function IndexScreen() {
         onPress={() => handleOpenAlert()}
       />
       <Button
-        title="Open Modal"
+        title="Open RN Modal"
         theme="secondary"
         onPress={() => setModalVisible(true)}
       />
+      <Link href="/modal" push asChild>
+        <Button title="Open Router Modal" theme="secondary" />
+      </Link>
+      <Link href="/modal-with-stack" push asChild>
+        <Button title="Open Router Modal (Stack)" theme="secondary" />
+      </Link>
       {/* https://reactnative.dev/docs/modal */}
       <Modal
         visible={modalVisible}
