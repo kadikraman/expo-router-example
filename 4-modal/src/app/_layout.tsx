@@ -3,6 +3,10 @@ import "../../global.css";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 
+export const unstable_settings = {
+  initialRouteName: "(tabs)", // anchor
+};
+
 export default function RootLayout() {
   return (
     <React.Fragment>
