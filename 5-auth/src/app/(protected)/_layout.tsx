@@ -1,13 +1,15 @@
+import { AuthContext } from "@/utils/authContext";
 import { Redirect, Stack } from "expo-router";
+import { useContext } from "react";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)", // anchor
 };
 
-const isLoggedIn = true;
-
 export default function ProtectedLayout() {
-  if (!isLoggedIn) {
+  const authState = useContext(AuthContext);
+
+  if (!authState.isLoggedIn) {
     return <Redirect href="/login" />;
   }
 
