@@ -9,6 +9,10 @@ export const unstable_settings = {
 export default function ProtectedLayout() {
   const authState = useContext(AuthContext);
 
+  if (!authState.isReady) {
+    return null;
+  }
+
   if (!authState.isLoggedIn) {
     return <Redirect href="/login" />;
   }
