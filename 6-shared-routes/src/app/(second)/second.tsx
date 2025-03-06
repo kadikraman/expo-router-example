@@ -12,6 +12,9 @@ export default function SecondScreen() {
       <Link href="/details" push asChild>
         <Button title="Push to /details" />
       </Link>
+      <Link href="(home)/details" push asChild>
+        <Button title="Push to (home)/details" theme="secondary" />
+      </Link>
     </View>
   );
 }
