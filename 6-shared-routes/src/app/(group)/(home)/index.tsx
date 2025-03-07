@@ -12,7 +12,7 @@ export default function IndexScreen() {
       <Link href="/details" push asChild>
         <Button title="Push to /details" />
       </Link>
-      <Link href="(second)/details" push asChild>
+      <Link href="(second)/details" push asChild withAnchor>
         <Button title="Push to (second)/details" theme="secondary" />
       </Link>
     </View>

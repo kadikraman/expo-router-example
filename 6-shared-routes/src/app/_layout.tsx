@@ -1,13 +1,13 @@
-import { Tabs } from "expo-router";
-import "../../global.css";
+import { Slot } from "expo-router";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
+import "../../global.css";
 
 export default function RootLayout() {
   return (
     <React.Fragment>
       <StatusBar style="auto" />
-      <Tabs screenOptions={{ headerShown: false }} />
+      <Slot />
     </React.Fragment>
   );
 }

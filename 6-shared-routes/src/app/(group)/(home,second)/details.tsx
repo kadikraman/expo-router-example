@@ -10,8 +10,8 @@ export default function DetailsScreen() {
     <View
       className={cn(
         "justify-center flex-1 p-4",
-        segments[0] === "(home)" && "bg-blue-200",
-        segments[0] === "(second)" && "bg-pink-200",
+        segments[1] === "(home)" && "bg-blue-200",
+        segments[1] === "(second)" && "bg-pink-200",
       )}
     >
       <AppText center size="heading">
