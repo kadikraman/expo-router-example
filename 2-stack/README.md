@@ -1,24 +1,13 @@
-# Expo starter
+# Using a Stack Navigator with Expo Router
 
-A plain project with the usual suspects set up:
+Learn to use the Stack Navigator in Expo Router: navigate between screens, pass params between screens, create dynamic routes and configure the screen titles and animations.
 
-- Expo Router
-- Nativewind
-- ESLint & Prettier
-- TypeScript
+To run this code, clone the repo, `cd 1-layouts`, `bun install` (or `npm install` etc) and `npx expo start`.
 
-It also contains two components:
-- `src/components/AppText.tsx` for text
-- `src/components/Button.tsx` for 3 button variants
+## Watch on YouTube
 
-And one utility:
-- `src/utils/cn.ts` for merging Tailwind classes
-
-## Start a new project with this template
-
-```sh
-git clone git@github.com:kadikraman/expo-starter.git my-app
-cd my-app
-cd my-app && rm -rf .git && git init && git add . && git commit -m "Initial commit"
-bun install # or remove the bun.lock file and use a different package manager
-```
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=izZv6a99Roo">
+    <img width="80%" src="https://img.youtube.com/vi/izZv6a99Roo/0.jpg">
+  </a>
+</p>
