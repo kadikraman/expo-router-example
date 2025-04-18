@@ -1,24 +1,11 @@
-# Expo starter
+# Using Modals with Expo Router
 
-A plain project with the usual suspects set up:
+Learn about the different ways to display content over the rest of your app: Alerts, the React Native modal component, and displaying a route of route app in a modal. We’ll also cover how to nest navigators in a modal, and deep link into the modal while keeping the rest of the app in the background.
 
-- Expo Router
-- Nativewind
-- ESLint & Prettier
-- TypeScript
+## Watch on YouTube
 
-It also contains two components:
-- `src/components/AppText.tsx` for text
-- `src/components/Button.tsx` for 3 button variants
-
-And one utility:
-- `src/utils/cn.ts` for merging Tailwind classes
-
-## Start a new project with this template
-
-```sh
-git clone git@github.com:kadikraman/expo-starter.git my-app
-cd my-app
-cd my-app && rm -rf .git && git init && git add . && git commit -m "Initial commit"
-bun install # or remove the bun.lock file and use a different package manager
-```
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=gNzuJVRmyDk">
+    <img width="80%" src="https://img.youtube.com/vi/gNzuJVRmyDk/0.jpg">
+  </a>
+</p>
