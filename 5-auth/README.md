@@ -1,24 +1,11 @@
-# Expo starter
+# Building an Auth Flow with Expo Router
 
-A plain project with the usual suspects set up:
+Learn how to implement an auth flow in your Expo Router project. We will display a login screen to unauthenticated users, persist the auth state in device storage and show how to delay hiding the splash screen when fetching the initial auth state is asynchronous.
 
-- Expo Router
-- Nativewind
-- ESLint & Prettier
-- TypeScript
+## Watch on YouTube
 
-It also contains two components:
-- `src/components/AppText.tsx` for text
-- `src/components/Button.tsx` for 3 button variants
-
-And one utility:
-- `src/utils/cn.ts` for merging Tailwind classes
-
-## Start a new project with this template
-
-```sh
-git clone git@github.com:kadikraman/expo-starter.git my-app
-cd my-app
-cd my-app && rm -rf .git && git init && git add . && git commit -m "Initial commit"
-bun install # or remove the bun.lock file and use a different package manager
-```
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=yNaOaR2kIa0">
+    <img width="80%" src="https://img.youtube.com/vi/yNaOaR2kIa0/0.jpg">
+  </a>
+</p>
