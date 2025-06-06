@@ -9,13 +9,9 @@ type ButtonProps = PressableProps & {
   disabled?: boolean;
 };
 
-export const Button = React.forwardRef<
-  React.ComponentRef<typeof Pressable>,
-  ButtonProps
->(({ title, onPress, theme = "primary", disabled, ...rest }, ref) => {
+export function Button({ title, onPress, theme = "primary", disabled, ...rest }: ButtonProps) {
   return (
     <Pressable
-      ref={ref}
       onPress={onPress}
       className={cn(
         "flex-row items-center justify-center rounded-md px-5 py-3 mb-4 border",
@@ -39,6 +35,4 @@ export const Button = React.forwardRef<
       </Text>
     </Pressable>
   );
-});
-
-Button.displayName = "Button";
+};
