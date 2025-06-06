@@ -2,20 +2,22 @@ import { Pressable, PressableProps, Text } from "react-native";
 import { cn } from "../utils/cn";
 import React from "react";
 
-type ButtonProps = {
+type ButtonProps = PressableProps & {
   title: string;
   onPress?: () => void;
   theme?: "primary" | "secondary" | "tertiary";
   disabled?: boolean;
-} & PressableProps;
+};
 
-export const Button = React.forwardRef<
-  React.ComponentRef<typeof Pressable>,
-  ButtonProps
->(({ title, onPress, theme = "primary", disabled, ...rest }, ref) => {
+export function Button({
+  title,
+  onPress,
+  theme = "primary",
+  disabled,
+  ...rest
+}: ButtonProps) {
   return (
     <Pressable
-      ref={ref}
       onPress={onPress}
       className={cn(
         "flex-row items-center justify-center rounded-md px-5 py-3 mb-4 border",
@@ -39,6 +41,4 @@ export const Button = React.forwardRef<
       </Text>
     </Pressable>
   );
-});
-
-Button.displayName = "Button";
+}
