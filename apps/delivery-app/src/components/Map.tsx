@@ -1,9 +1,7 @@
+import { AppleMaps, GoogleMaps } from "expo-maps";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
+import { ActivityIndicator, Platform, Text, View } from "react-native";
 
-import { icons } from "@/constants";
 import { useFetch } from "@/lib/fetch";
 import {
   calculateDriverTimes,
@@ -13,14 +11,7 @@ import {
 import { useDriverStore, useLocationStore } from "@/store";
 import { Driver, MarkerData } from "@/types/type";
 
-const directionsAPI = process.env.EXPO_PUBLIC_DIRECTIONS_API_KEY;
-
 const Map = () => {
-  return (
-    <View>
-      <Text>Map</Text>
-    </View>
-  );
   const {
     userLongitude,
     userLatitude,
@@ -85,59 +76,95 @@ const Map = () => {
       </View>
     );
 
-  return (
-    <MapView
-      provider={PROVIDER_DEFAULT}
-      className="w-full h-full rounded-2xl"
-      tintColor="black"
-      mapType="mutedStandard"
-      showsPointsOfInterest={false}
-      initialRegion={region}
-      showsUserLocation={true}
-      userInterfaceStyle="light"
-    >
-      {markers.map((marker, index) => (
-        <Marker
-          key={marker.id}
-          coordinate={{
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-          }}
-          title={marker.title}
-          image={
-            selectedDriver === +marker.id ? icons.selectedMarker : icons.marker
-          }
-        />
-      ))}
-
-      {destinationLatitude && destinationLongitude && (
-        <>
-          <Marker
-            key="destination"
-            coordinate={{
-              latitude: destinationLatitude,
-              longitude: destinationLongitude,
-            }}
-            title="Destination"
-            image={icons.pin}
-          />
-          <MapViewDirections
-            origin={{
-              latitude: userLatitude!,
-              longitude: userLongitude!,
-            }}
-            destination={{
-              latitude: destinationLatitude,
-              longitude: destinationLongitude,
-            }}
-            apikey={directionsAPI!}
-            strokeColor="#0286FF"
-            strokeWidth={2}
-          />
-        </>
-      )}
-    </MapView>
-  );
+  // Platform-specific map rendering
+  if (Platform.OS === "ios") {
+    return (
+      <AppleMaps.View
+        style={{ width: "100%", height: "100%", borderRadius: 16 }}
+        cameraPosition={{
+          coordinates: {
+            latitude: region.latitude,
+            longitude: region.longitude,
+          },
+          zoom: 10,
+        }}
+        markers={[
+          ...markers.map((marker) => ({
+            id: String(marker.id),
+            coordinates: {
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            },
+            title: marker.title,
+          })),
+          ...(destinationLatitude && destinationLongitude
+            ? [
+                {
+                  id: "destination",
+                  coordinates: {
+                    latitude: destinationLatitude,
+                    longitude: destinationLongitude,
+                  },
+                  title: "Destination",
+                },
+              ]
+            : []),
+        ]}
+      />
+    );
+  } else if (Platform.OS === "android") {
+    return (
+      <GoogleMaps.View
+        style={{ width: "100%", height: "100%", borderRadius: 16 }}
+        cameraPosition={{
+          coordinates: {
+            latitude: region.latitude,
+            longitude: region.longitude,
+          },
+          zoom: 10,
+        }}
+        markers={[
+          ...markers.map((marker) => ({
+            id: String(marker.id),
+            coordinates: {
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            },
+            title: marker.title,
+          })),
+          ...(destinationLatitude && destinationLongitude
+            ? [
+                {
+                  id: "destination",
+                  coordinates: {
+                    latitude: destinationLatitude,
+                    longitude: destinationLongitude,
+                  },
+                  title: "Destination",
+                },
+              ]
+            : []),
+        ]}
+      />
+    );
+  } else {
+    return (
+      <View
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: 16,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f0f0f0",
+        }}
+      >
+        <Text style={{ textAlign: "center", color: "#666" }}>
+          Maps are only available on Android and iOS
+        </Text>
+      </View>
+    );
+  }
 };
 
 export default Map;

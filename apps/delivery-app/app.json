@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Protected Routes",
-    "slug": "6-protected-routes",
+    "name": "Delivery",
+    "slug": "delivery",
     "scheme": "expo-starter",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,13 +14,24 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.joesome.delivery"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBuwD4ofwd-zwYZV5RFP8QNTTBfeStBG8I"
+        }
+      },
+      "package": "com.joesome.delivery"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,9 +40,20 @@
       "expo-router",
       "expo-secure-store",
       "expo-location",
-      ["expo-maps", {
-        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY_HERE"
-      }]
-    ]
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "070ad617-3693-4dc6-879e-0af724288d36"
+      }
+    }
   }
 }
