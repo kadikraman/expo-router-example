@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { Image, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 import { icons } from "@/constants";
