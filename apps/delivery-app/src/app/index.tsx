@@ -1,7 +1,13 @@
+// import { useAuth } from "@clerk/clerk-expo";
 import { Redirect } from "expo-router";
 
-export default function Index() {
-  // For now, redirect directly to home
-  // In a real app, you might want to check authentication status here
-  return <Redirect href="/(root)/(tabs)/home" />;
-}
+const Page = () => {
+  // const { isSignedIn } = useAuth();
+  const isSignedIn = true;
+
+  if (isSignedIn) return <Redirect href="/(root)/(tabs)/home" />;
+
+  return <Redirect href="/(auth)/welcome" />;
+};
+
+export default Page;
