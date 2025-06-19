@@ -17,9 +17,69 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
-import { useFetch } from "@/lib/fetch";
 import { useLocationStore } from "@/store";
 import { Ride } from "@/types/type";
+
+// Dummy rides data
+const dummyRides: Ride[] = [
+  {
+    origin_address: "123 Main St, New York, NY",
+    destination_address: "456 Broadway, New York, NY",
+    origin_latitude: 40.7128,
+    origin_longitude: -74.006,
+    destination_latitude: 40.7589,
+    destination_longitude: -73.9851,
+    ride_time: 25,
+    fare_price: 18.5,
+    payment_status: "paid",
+    driver_id: 1,
+    user_id: "123",
+    created_at: "2024-01-15T10:30:00Z",
+    driver: {
+      first_name: "James",
+      last_name: "Wilson",
+      car_seats: 4,
+    },
+  },
+  {
+    origin_address: "789 Park Ave, New York, NY",
+    destination_address: "321 5th Ave, New York, NY",
+    origin_latitude: 40.7614,
+    origin_longitude: -73.9776,
+    destination_latitude: 40.7505,
+    destination_longitude: -73.9934,
+    ride_time: 15,
+    fare_price: 12.75,
+    payment_status: "paid",
+    driver_id: 2,
+    user_id: "123",
+    created_at: "2024-01-14T14:20:00Z",
+    driver: {
+      first_name: "David",
+      last_name: "Brown",
+      car_seats: 5,
+    },
+  },
+  {
+    origin_address: "111 Wall St, New York, NY",
+    destination_address: "555 Madison Ave, New York, NY",
+    origin_latitude: 40.7074,
+    origin_longitude: -74.0113,
+    destination_latitude: 40.7614,
+    destination_longitude: -73.9776,
+    ride_time: 30,
+    fare_price: 22.0,
+    payment_status: "paid",
+    driver_id: 3,
+    user_id: "123",
+    created_at: "2024-01-13T16:45:00Z",
+    driver: {
+      first_name: "Michael",
+      last_name: "Johnson",
+      car_seats: 4,
+    },
+  },
+];
 
 const Home = () => {
   // const { user } = useUser();
@@ -41,11 +101,10 @@ const Home = () => {
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
 
-  const {
-    data: recentRides,
-    loading,
-    error,
-  } = useFetch<Ride[]>(`/(api)/ride/${user?.id}`);
+  // Replace useFetch with dummy data
+  const recentRides = dummyRides;
+  const loading = false;
+  const error = null;
 
   useEffect(() => {
     (async () => {
@@ -83,8 +142,7 @@ const Home = () => {
   return (
     <SafeAreaView className="bg-general-500">
       <FlatList
-        data={[]}
-        // data={recentRides?.slice(0, 5)}
+        data={recentRides?.slice(0, 5)}
         renderItem={({ item }) => <RideCard ride={item} />}
         keyExtractor={(item, index) => index.toString()}
         className="px-5"
