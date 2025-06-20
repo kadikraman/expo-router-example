@@ -497,7 +497,15 @@ const Home = () => {
     <SafeAreaView className="bg-general-500">
       <FlatList
         data={recentRides?.slice(0, 5)}
-        renderItem={({ item }) => <RideCard ride={item} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() =>
+              router.push(`/(root)/ride-details?id=${item.ride_id}`)
+            }
+          >
+            <RideCard ride={item} />
+          </TouchableOpacity>
+        )}
         className="px-5"
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{

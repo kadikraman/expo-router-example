@@ -1,11 +1,15 @@
 import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
-  FlatList,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    FlatList,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -360,17 +364,65 @@ const MessageBubble = ({
 );
 
 const MessageThread = () => {
-  const { id, rideId, deliveryId } = useLocalSearchParams();
+    const { id, rideId, deliveryId, isDelivery } = useLocalSearchParams();
+    const [messageText, setMessageText] = useState("");
+    const [messages, setMessages] = useState<any[]>([]);
+    const [threadData, setThreadData] = useState<any | null>(null);
+    const flatListRef = useRef<FlatList>(null);
+    const [isTyping, setIsTyping] = useState(false);
 
-  // First try to get existing thread data
-  let threadData = dummyMessageThreads[id as keyof typeof dummyMessageThreads];
+    // Initialize thread data and messages
+    useEffect(() => {
+        let initialThreadData =
+            dummyMessageThreads[id as keyof typeof dummyMessageThreads];
 
-  // If no existing thread and it's a customer chat, generate dynamic data
-  if (!threadData && id.toString().startsWith("customer_") && deliveryId) {
-    const deliveryContext =
-      deliveryContexts[deliveryId as keyof typeof deliveryContexts];
-    threadData = generateCustomerChat(deliveryId as string, deliveryContext);
-  }
+      // If no existing thread and it's a customer chat, generate dynamic data
+      if (
+          !initialThreadData &&
+          id.toString().startsWith("customer_") &&
+          deliveryId
+      ) {
+          const deliveryContext =
+              deliveryContexts[deliveryId as keyof typeof deliveryContexts];
+          initialThreadData = generateCustomerChat(
+              deliveryId as string,
+              deliveryContext,
+          );
+      }
+
+      // Handle driver communication from delivery requests
+      if (!initialThreadData && isDelivery === "true") {
+          // Create a new delivery-specific chat
+          initialThreadData = {
+              id: id.toString(),
+              name: id
+                  .toString()
+                  .replace("_", " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase()),
+              avatar:
+                  "https://ucarecdn.com/fdfc54df-9d24-40f7-b7d3-6f391561c0db/-/preview/400x400/",
+              isDriver: true,
+              status: "online",
+              messages: [
+                  {
+                      id: "1",
+                      text: "Hi! I'm your delivery driver. I've accepted your delivery request and I'm heading to the pickup location now.",
+                      timestamp: new Date().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                      }),
+                      sender: "driver",
+                      type: "text",
+                  },
+              ],
+          };
+      }
+
+      if (initialThreadData) {
+          setThreadData(initialThreadData);
+          setMessages(initialThreadData.messages || []);
+      }
+  }, [id, deliveryId, isDelivery]);
 
   const rideContext = rideId
     ? rideContexts[rideId as keyof typeof rideContexts]
@@ -384,140 +436,358 @@ const MessageThread = () => {
       <SafeAreaView className="flex-1 bg-white">
         <View className="flex-1 justify-center items-center">
           <Text className="text-xl font-JakartaSemiBold">Chat not found</Text>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    className="mt-4 bg-blue-500 px-6 py-2 rounded-lg"
+                >
+                    <Text className="text-white font-JakartaSemiBold">Go Back</Text>
+                </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
 
-  const isDriverChat = id.toString().startsWith("customer_");
+    const sendMessage = () => {
+        if (!messageText.trim() || !threadData) return;
+
+        const newMessage = {
+            id: (messages.length + 1).toString(),
+            text: messageText.trim(),
+            timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+            sender: isDelivery === "true" ? "driver" : "user",
+            type: "text",
+        };
+
+        setMessages((prev) => [...prev, newMessage]);
+        setMessageText("");
+
+        // Scroll to bottom
+        setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+
+        // Simulate response from the other party
+        simulateResponse(newMessage.text);
+    };
+
+    const simulateResponse = (userMessage: string) => {
+        if (!threadData) return;
+
+        setIsTyping(true);
+
+        setTimeout(
+            () => {
+                const responses = getSmartResponse(
+                    userMessage,
+                    threadData.isDriver,
+                    isDelivery === "true",
+                );
+                const response =
+                    responses[Math.floor(Math.random() * responses.length)];
+
+                const responseMessage = {
+                    id: (messages.length + 2).toString(),
+                    text: response,
+                    timestamp: new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
+                    sender:
+                        isDelivery === "true"
+                            ? "customer"
+                            : threadData.isDriver
+                                ? "driver"
+                                : "support",
+                    type: "text",
+                };
+
+                setMessages((prev) => [...prev, responseMessage]);
+                setIsTyping(false);
+
+                setTimeout(() => {
+                    flatListRef.current?.scrollToEnd({ animated: true });
+                }, 100);
+            },
+            1000 + Math.random() * 2000,
+        ); // Random delay between 1-3 seconds
+    };
+
+    const getSmartResponse = (
+        userMessage: string,
+        isDriverThread: boolean,
+        isDeliveryChat: boolean,
+    ) => {
+        const message = userMessage.toLowerCase();
+
+        if (isDeliveryChat) {
+            // Delivery-specific responses
+            if (message.includes("where") || message.includes("location")) {
+                return [
+                    "I'm currently 5 minutes away from your location",
+                    "I'm en route to the pickup location now",
+                    "Just picked up your order, heading your way!",
+                ];
+            }
+            if (message.includes("time") || message.includes("long")) {
+                return [
+                    "I'll be there in about 8 minutes",
+                    "Running slightly behind, should be there in 10 minutes",
+                    "Almost there! 3 minutes away",
+                ];
+            }
+            if (message.includes("outside") || message.includes("here")) {
+                return [
+                    "Perfect! I'll be right there",
+                    "Great, I can see the building. Coming up now",
+                    "On my way up!",
+                ];
+            }
+            return [
+                "Thanks for the message! I'll keep you updated",
+                "Got it, thanks for letting me know",
+                "Sounds good! Almost there",
+                "Perfect, see you soon!",
+            ];
+        }
+
+        if (isDriverThread) {
+            // Driver responses
+            if (message.includes("thank") || message.includes("thanks")) {
+                return [
+                    "You're welcome! Have a great day!",
+                    "My pleasure! Safe travels!",
+                    "Glad I could help! Take care!",
+                ];
+            }
+            if (message.includes("where") || message.includes("location")) {
+                return [
+                    "I'm about 5 minutes away",
+                    "Just turned onto your street",
+                    "I'm in the blue Toyota, pulling up now",
+                ];
+            }
+            return [
+                "Perfect! See you soon",
+                "Got it, thanks!",
+                "Sounds good!",
+                "On my way!",
+            ];
+        }
+
+        // Support responses
+        return [
+            "Thanks for reaching out! How else can I help?",
+            "Is there anything else you need assistance with?",
+            "Perfect! Let me know if you have any other questions",
+            "Glad I could help! Have a great day!",
+        ];
+    };
+
+    const isDriverChat =
+        id.toString().startsWith("customer_") || isDelivery === "true";
+
+    // Quick action responses
+    const quickResponses =
+        isDelivery === "true"
+            ? ["I'm on my way", "5 minutes away", "Just arrived", "Thank you!"]
+            : ["Thanks!", "On my way", "See you soon", "Perfect!"];
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex flex-col border-b border-gray-100 bg-white">
-        <View className="flex flex-row items-center px-5 py-3">
-          <TouchableOpacity onPress={() => router.back()} className="mr-3">
-            <Image source={icons.backArrow} className="w-6 h-6" />
-          </TouchableOpacity>
+      <KeyboardAvoidingView
+          className="flex-1 bg-white"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+          <SafeAreaView className="flex-1">
+              {/* Header */}
+              <View className="flex flex-col border-b border-gray-100 bg-white">
+                  <View className="flex flex-row items-center px-5 py-3">
+                      <TouchableOpacity onPress={() => router.back()} className="mr-3">
+                          <Image source={icons.backArrow} className="w-6 h-6" />
+                      </TouchableOpacity>
 
-          <View className="relative mr-3">
-            <Image
-              source={{ uri: threadData.avatar }}
-              className="w-10 h-10 rounded-full"
-            />
-            {threadData.isDriver && (
-              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" />
-            )}
-            {!threadData.isDriver && isDriverChat && (
-              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white" />
-            )}
-          </View>
+                      <View className="relative mr-3">
+                          <Image
+                              source={{ uri: threadData.avatar }}
+                              className="w-10 h-10 rounded-full"
+                          />
+                          {threadData.isDriver && (
+                              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" />
+                          )}
+                          {!threadData.isDriver && isDriverChat && (
+                              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white" />
+                          )}
+                      </View>
 
-          <View className="flex-1">
-            <Text className="text-lg font-JakartaSemiBold">
-              {threadData.name}
-            </Text>
-            <Text className="text-sm text-gray-500">
-              {threadData.status === "online"
-                ? "Active now"
-                : "Last seen recently"}
-              {isDriverChat && " • Customer"}
-            </Text>
-          </View>
+                      <View className="flex-1">
+                          <Text className="text-lg font-JakartaSemiBold">
+                              {threadData.name}
+                          </Text>
+                          <Text className="text-sm text-gray-500">
+                              {isTyping
+                                  ? "Typing..."
+                                  : threadData.status === "online"
+                                      ? "Active now"
+                                      : "Last seen recently"}
+                              {isDriverChat && " • Delivery"}
+                          </Text>
+                      </View>
 
-          <View className="flex flex-row space-x-2">
-            <TouchableOpacity className="p-2">
-              <Image source={icons.star} className="w-5 h-5" tintColor="#666" />
-            </TouchableOpacity>
-            <TouchableOpacity className="p-2">
-              <Image source={icons.chat} className="w-5 h-5" tintColor="#666" />
-            </TouchableOpacity>
-          </View>
-        </View>
+                      <View className="flex flex-row space-x-2">
+                          <TouchableOpacity
+                              className="p-2"
+                              onPress={() =>
+                                  Alert.alert("Call", `Calling ${threadData.name}...`)
+                              }
+                          >
+                              <Image
+                                  source={icons.star}
+                                  className="w-5 h-5"
+                                  tintColor="#666"
+                              />
+                          </TouchableOpacity>
+                      </View>
+                  </View>
 
-        {/* Ride Context Banner */}
-        {rideContext && (
-          <View className="px-5 py-3 bg-blue-50 border-t border-blue-100">
-            <Text className="text-sm font-JakartaSemiBold text-blue-800 mb-1">
-              Ride on {rideContext.date} at {rideContext.time}
-            </Text>
-            <View className="flex flex-row items-center">
-              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-              <Text className="text-xs text-blue-700 flex-1" numberOfLines={1}>
-                From: {rideContext.origin}
-              </Text>
-            </View>
-            <View className="flex flex-row items-center mt-1">
-              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
-              <Text className="text-xs text-blue-700 flex-1" numberOfLines={1}>
-                To: {rideContext.destination}
-              </Text>
-            </View>
-          </View>
-        )}
+                  {/* Context Banners */}
+                  {rideContext && (
+                      <View className="px-5 py-3 bg-blue-50 border-t border-blue-100">
+                          <Text className="text-sm font-JakartaSemiBold text-blue-800 mb-1">
+                              Ride on {rideContext.date} at {rideContext.time}
+                          </Text>
+                          <View className="flex flex-row items-center">
+                              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                              <Text
+                                  className="text-xs text-blue-700 flex-1"
+                                  numberOfLines={1}
+                              >
+                                  From: {rideContext.origin}
+                              </Text>
+                          </View>
+                          <View className="flex flex-row items-center mt-1">
+                              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
+                              <Text
+                                  className="text-xs text-blue-700 flex-1"
+                                  numberOfLines={1}
+                              >
+                                  To: {rideContext.destination}
+                              </Text>
+                          </View>
+                      </View>
+                  )}
 
-        {/* Delivery Context Banner */}
-        {deliveryContext && (
-          <View className="px-5 py-3 bg-green-50 border-t border-green-100">
-            <Text className="text-sm font-JakartaSemiBold text-green-800 mb-1">
-              Active Delivery • {deliveryContext.status}
-            </Text>
-            <View className="flex flex-row items-center">
-              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-              <Text className="text-xs text-green-700 flex-1" numberOfLines={1}>
-                Pickup: {deliveryContext.pickup}
-              </Text>
-            </View>
-            <View className="flex flex-row items-center mt-1">
-              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
-              <Text className="text-xs text-green-700 flex-1" numberOfLines={1}>
-                Delivery: {deliveryContext.delivery}
-              </Text>
-            </View>
-            <Text className="text-xs text-green-600 mt-1">
-              Items: {deliveryContext.items}
-            </Text>
-          </View>
-        )}
-      </View>
+                  {deliveryContext && (
+                      <View className="px-5 py-3 bg-green-50 border-t border-green-100">
+                          <Text className="text-sm font-JakartaSemiBold text-green-800 mb-1">
+                              Active Delivery • {deliveryContext.status}
+                          </Text>
+                          <View className="flex flex-row items-center">
+                              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                              <Text
+                                  className="text-xs text-green-700 flex-1"
+                                  numberOfLines={1}
+                              >
+                                  Pickup: {deliveryContext.pickup}
+                              </Text>
+                          </View>
+                          <View className="flex flex-row items-center mt-1">
+                              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
+                              <Text
+                                  className="text-xs text-green-700 flex-1"
+                                  numberOfLines={1}
+                              >
+                                  Delivery: {deliveryContext.delivery}
+                              </Text>
+                          </View>
+                          <Text className="text-xs text-green-600 mt-1">
+                              Items: {deliveryContext.items}
+                          </Text>
+                      </View>
+                  )}
+              </View>
 
-      {/* Messages */}
-      <FlatList
-        data={threadData.messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <MessageBubble
-            message={item}
-            isUser={
-              isDriverChat ? item.sender === "driver" : item.sender === "user"
-            }
-          />
-        )}
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
+              {/* Messages */}
+              <FlatList
+                  ref={flatListRef}
+                  data={messages}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                      <MessageBubble
+                          message={item}
+                          isUser={
+                              isDriverChat ? item.sender === "driver" : item.sender === "user"
+                          }
+                      />
+                  )}
+                  contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+                  showsVerticalScrollIndicator={false}
+                  onContentSizeChange={() =>
+                      flatListRef.current?.scrollToEnd({ animated: true })
+                  }
+              />
 
-      {/* Message Input */}
-      <View className="flex flex-row items-center px-4 py-3 border-t border-gray-100 bg-white">
-        <View className="flex-1 flex flex-row items-center bg-gray-100 rounded-full px-4 py-2 mr-3">
-          <TextInput
-            placeholder={
-              isDriverChat ? "Message customer..." : "Type a message..."
-            }
-            className="flex-1 text-base"
-            multiline
-            maxLength={500}
-          />
-          <TouchableOpacity className="ml-2">
-            <Image source={icons.chat} className="w-5 h-5" tintColor="#666" />
-          </TouchableOpacity>
-        </View>
+              {/* Typing Indicator */}
+              {isTyping && (
+                  <View className="px-4 pb-2">
+                      <View className="flex flex-row justify-start">
+                          <View className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-2">
+                              <Text className="text-gray-500">Typing...</Text>
+                          </View>
+                      </View>
+                  </View>
+              )}
 
-        <TouchableOpacity className="bg-blue-500 w-10 h-10 rounded-full justify-center items-center">
-          <Image source={icons.arrowUp} className="w-5 h-5" tintColor="white" />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+              {/* Quick Responses */}
+              <View className="px-4 py-2">
+                  <Text className="text-sm text-gray-500 mb-2">Quick responses:</Text>
+                  <View className="flex flex-row flex-wrap">
+                      {quickResponses.map((response, index) => (
+                          <TouchableOpacity
+                              key={index}
+                              onPress={() => {
+                                  setMessageText(response);
+                              }}
+                              className="bg-gray-100 px-3 py-1 rounded-full mr-2 mb-2"
+                          >
+                              <Text className="text-sm text-gray-700">{response}</Text>
+                          </TouchableOpacity>
+                      ))}
+                  </View>
+              </View>
+
+              {/* Message Input */}
+              <View className="flex flex-row items-end px-4 py-3 border-t border-gray-100 bg-white">
+                  <View className="flex-1 flex flex-row items-end bg-gray-100 rounded-full px-4 py-2 mr-3 max-h-24">
+                      <TextInput
+                          value={messageText}
+                          onChangeText={setMessageText}
+                          placeholder={
+                              isDriverChat ? "Message customer..." : "Type a message..."
+                          }
+                          className="flex-1 text-base py-1"
+                          multiline
+                          maxLength={500}
+                          style={{ maxHeight: 60 }}
+                      />
+                  </View>
+
+                  <TouchableOpacity
+                      onPress={sendMessage}
+                      className={`w-10 h-10 rounded-full justify-center items-center ${messageText.trim() ? "bg-blue-500" : "bg-gray-300"
+                          }`}
+                      disabled={!messageText.trim()}
+                  >
+                      <Image
+                          source={icons.arrowUp}
+                          className="w-5 h-5"
+                          tintColor="white"
+                      />
+                  </TouchableOpacity>
+              </View>
+          </SafeAreaView>
+      </KeyboardAvoidingView>
   );
 };
 
