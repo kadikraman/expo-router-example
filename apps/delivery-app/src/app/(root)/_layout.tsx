@@ -47,6 +47,48 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="driver-application"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="driver-faq"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings/personal-info"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings/notifications"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings/payment"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings/help"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings/contact"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

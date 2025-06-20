@@ -15,13 +15,14 @@ const dummyUser = {
   lastName: "Doe",
   fullName: "John Doe",
   primaryEmailAddress: {
-    emailAddress: "john.doe@example.com"
+    emailAddress: "john.doe@example.com",
   },
   emailAddresses: [{ emailAddress: "john.doe@example.com" }], // Keep for backward compatibility
   primaryPhoneNumber: {
-    phoneNumber: "+1 (555) 123-4567"
+    phoneNumber: "+1 (555) 123-4567",
   },
-  imageUrl: "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
+  imageUrl:
+    "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
 };
 
 const BookRide = () => {

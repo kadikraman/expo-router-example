@@ -11,7 +11,8 @@ const dummyChats = [
     name: "James Wilson",
     lastMessage: "Thanks for the ride! Have a great day!",
     timestamp: "2 min ago",
-    avatar: "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
+    avatar:
+      "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
     unreadCount: 0,
     isDriver: true,
   },
@@ -20,7 +21,8 @@ const dummyChats = [
     name: "Support Team",
     lastMessage: "How can we help you today?",
     timestamp: "1 hour ago",
-    avatar: "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/400x400/",
+    avatar:
+      "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/400x400/",
     unreadCount: 1,
     isDriver: false,
   },
@@ -29,7 +31,8 @@ const dummyChats = [
     name: "David Brown",
     lastMessage: "I'm on my way to pick you up",
     timestamp: "Yesterday",
-    avatar: "https://ucarecdn.com/0330d85c-232e-4c30-bd04-e5e4d0e3d688/-/preview/400x400/",
+    avatar:
+      "https://ucarecdn.com/0330d85c-232e-4c30-bd04-e5e4d0e3d688/-/preview/400x400/",
     unreadCount: 0,
     isDriver: true,
   },
@@ -38,13 +41,14 @@ const dummyChats = [
     name: "Michael Johnson",
     lastMessage: "Ride completed successfully",
     timestamp: "2 days ago",
-    avatar: "https://ucarecdn.com/fdfc54df-9d24-40f7-b7d3-6f391561c0db/-/preview/400x400/",
+    avatar:
+      "https://ucarecdn.com/fdfc54df-9d24-40f7-b7d3-6f391561c0db/-/preview/400x400/",
     unreadCount: 0,
     isDriver: true,
   },
 ];
 
-const ChatItem = ({ item }: { item: typeof dummyChats[0] }) => (
+const ChatItem = ({ item }: { item: (typeof dummyChats)[0] }) => (
   <TouchableOpacity
     className="flex flex-row items-center px-5 py-4 border-b border-gray-100"
     onPress={() => router.push(`/(root)/message-thread?id=${item.id}`)}
