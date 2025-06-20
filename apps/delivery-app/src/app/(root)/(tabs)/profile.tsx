@@ -1,5 +1,6 @@
 // import { useUser } from "@clerk/clerk-expo";
-import { Image, ScrollView, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import InputField from "@/components/InputField";
@@ -112,6 +113,72 @@ const Profile = () => {
               {user?.joinDate}
             </Text>
           </View>
+        </View>
+
+        {/* Action Buttons Section */}
+        <View className="flex flex-col items-start justify-center bg-white rounded-lg shadow-sm shadow-neutral-300 px-5 py-3 mt-5">
+          <Text className="text-xl font-JakartaBold mb-5">Quick Actions</Text>
+
+          {/* Refer Friends Button */}
+          <TouchableOpacity
+            className="flex flex-row items-center justify-between w-full py-4 border-b border-gray-100"
+            onPress={() => router.push("/(root)/refer-friends")}
+          >
+            <View className="flex flex-row items-center">
+              <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
+                <Text className="text-blue-600 text-lg">👥</Text>
+              </View>
+              <View>
+                <Text className="text-lg font-JakartaSemiBold">
+                  Refer Friends
+                </Text>
+                <Text className="text-sm text-gray-500">
+                  Earn rewards for every referral
+                </Text>
+              </View>
+            </View>
+            <Text className="text-gray-400 text-lg">›</Text>
+          </TouchableOpacity>
+
+          {/* Earn by Delivering Button */}
+          <TouchableOpacity
+            className="flex flex-row items-center justify-between w-full py-4 border-b border-gray-100"
+            onPress={() => router.push("/(root)/driver-onboarding")}
+          >
+            <View className="flex flex-row items-center">
+              <View className="w-10 h-10 bg-green-100 rounded-full items-center justify-center mr-3">
+                <Text className="text-green-600 text-lg">🚗</Text>
+              </View>
+              <View>
+                <Text className="text-lg font-JakartaSemiBold">
+                  Earn by Delivering
+                </Text>
+                <Text className="text-sm text-gray-500">
+                  Become a driver and start earning
+                </Text>
+              </View>
+            </View>
+            <Text className="text-gray-400 text-lg">›</Text>
+          </TouchableOpacity>
+
+          {/* Settings Button */}
+          <TouchableOpacity
+            className="flex flex-row items-center justify-between w-full py-4"
+            onPress={() => router.push("/(root)/settings")}
+          >
+            <View className="flex flex-row items-center">
+              <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center mr-3">
+                <Text className="text-gray-600 text-lg">⚙️</Text>
+              </View>
+              <View>
+                <Text className="text-lg font-JakartaSemiBold">Settings</Text>
+                <Text className="text-sm text-gray-500">
+                  Manage your account preferences
+                </Text>
+              </View>
+            </View>
+            <Text className="text-gray-400 text-lg">›</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

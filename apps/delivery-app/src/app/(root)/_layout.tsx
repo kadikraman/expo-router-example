@@ -29,6 +29,24 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="refer-friends"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="driver-onboarding"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="settings"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };
