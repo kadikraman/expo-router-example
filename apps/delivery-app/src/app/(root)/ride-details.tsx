@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/CustomButton";
 import { icons } from "@/constants";
 
 // Extended dummy ride data with full details
@@ -135,6 +136,34 @@ const RideDetails = () => {
               className="w-20 h-12 rounded-lg"
               resizeMode="cover"
             />
+          </View>
+
+          {/* Driver Actions */}
+          <View className="flex flex-row space-x-3 mt-4 pt-4 border-t border-gray-100">
+            <CustomButton
+              title="Message Driver"
+              onPress={() =>
+                router.push(
+                  `/(root)/message-thread?id=${rideData.driver.driver_id}&rideId=${rideData.ride_id}`,
+                )
+              }
+              className="flex-1"
+              IconLeft={() => (
+                <Image
+                  source={icons.chat}
+                  className="w-5 h-5 mr-2"
+                  tintColor="white"
+                />
+              )}
+            />
+            <TouchableOpacity className="bg-gray-100 px-4 py-3 rounded-lg flex-row items-center">
+              <Image
+                source={icons.star}
+                className="w-5 h-5 mr-2"
+                tintColor="#666"
+              />
+              <Text className="text-gray-700 font-JakartaSemiBold">Rate</Text>
+            </TouchableOpacity>
           </View>
         </View>
 

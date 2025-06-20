@@ -30,6 +30,12 @@ const Layout = () => {
         }}
       />
       <Stack.Screen
+        name="active-delivery"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="refer-friends"
         options={{
           headerShown: false,

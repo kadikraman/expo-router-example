@@ -3,7 +3,9 @@ import { router } from "expo-router";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
+import { useDriverModeStore } from "@/store";
 
 // Dummy user profile data
 const dummyUser = {
@@ -26,6 +28,8 @@ const dummyUser = {
 const Profile = () => {
   // const { user } = useUser();
   const user = dummyUser;
+  const { isDriverMode, isRegisteredDriver, toggleDriverMode } =
+    useDriverModeStore();
 
   return (
     <SafeAreaView className="flex-1">
@@ -114,6 +118,44 @@ const Profile = () => {
             </Text>
           </View>
         </View>
+
+        {/* Driver Mode Section */}
+        {isRegisteredDriver && (
+          <View className="flex flex-col items-start justify-center bg-white rounded-lg shadow-sm shadow-neutral-300 px-5 py-3 mt-5">
+            <Text className="text-xl font-JakartaBold mb-5">Driver Mode</Text>
+
+            <View className="flex flex-row items-center justify-between w-full py-3 border-b border-gray-100">
+              <View className="flex flex-row items-center">
+                <Text className="text-xl mr-3">🚗</Text>
+                <View>
+                  <Text className="text-lg font-JakartaSemiBold">
+                    {isDriverMode
+                      ? "Driver Mode Active"
+                      : "Switch to Driver Mode"}
+                  </Text>
+                  <Text className="text-gray-600 text-sm">
+                    {isDriverMode
+                      ? "You're currently in driver mode. Go to home to manage deliveries."
+                      : "Start earning by accepting delivery requests"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="w-full mt-4">
+              <CustomButton
+                title={
+                  isDriverMode ? "Switch to User Mode" : "Switch to Driver Mode"
+                }
+                onPress={() => {
+                  toggleDriverMode();
+                  router.push("/(root)/(tabs)/home");
+                }}
+                className={isDriverMode ? "bg-gray-500" : "bg-blue-500"}
+              />
+            </View>
+          </View>
+        )}
 
         {/* Action Buttons Section */}
         <View className="flex flex-col items-start justify-center bg-white rounded-lg shadow-sm shadow-neutral-300 px-5 py-3 mt-5">

@@ -17,7 +17,7 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
-import { useLocationStore } from "@/store";
+import { useDriverModeStore, useLocationStore } from "@/store";
 import { Ride } from "@/types/type";
 
 // Dummy rides data - with ride_id for navigation
@@ -100,6 +100,154 @@ const dummyUser = {
     "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
 };
 
+// Dummy delivery requests for driver mode
+const dummyDeliveryRequests = [
+  {
+    id: "req_1",
+    pickupAddress: "McDonald's, 789 Main St",
+    deliveryAddress: "456 Oak Ave, Apt 2B",
+    pickupLatitude: 40.7128,
+    pickupLongitude: -74.006,
+    deliveryLatitude: 40.7589,
+    deliveryLongitude: -73.9851,
+    distance: "2.5 miles",
+    estimatedTime: "12 mins",
+    fare: 8.5,
+    customerName: "Sarah Johnson",
+    customerPhone: "+1 (555) 123-4567",
+    orderDetails: "Big Mac meal, Fries, Coke",
+    requestTime: "2 mins ago",
+    expiresAt: Date.now() + 30000, // 30 seconds from now
+  },
+  {
+    id: "req_2",
+    pickupAddress: "Pizza Palace, 123 Broadway",
+    deliveryAddress: "789 Elm Street",
+    pickupLatitude: 40.7614,
+    pickupLongitude: -73.9776,
+    deliveryLatitude: 40.7505,
+    deliveryLongitude: -73.9934,
+    distance: "1.8 miles",
+    estimatedTime: "8 mins",
+    fare: 12.25,
+    customerName: "Mike Chen",
+    customerPhone: "+1 (555) 987-6543",
+    orderDetails: "Large Pepperoni Pizza, Garlic Bread",
+    requestTime: "Just now",
+    expiresAt: Date.now() + 45000, // 45 seconds from now
+  },
+];
+
+// Driver Mode UI Components
+interface DriverRequestModalProps {
+  currentRequest: any;
+  declineRequest: () => void;
+  acceptRequest: () => void;
+}
+
+const DriverRequestModal: React.FC<DriverRequestModalProps> = ({
+  currentRequest,
+  declineRequest,
+  acceptRequest,
+}) => {
+  const [timeLeft, setTimeLeft] = useState(30);
+
+  useEffect(() => {
+    if (!currentRequest) return;
+
+    const timer = setInterval(() => {
+      const remaining = Math.max(
+        0,
+        Math.floor((currentRequest.expiresAt - Date.now()) / 1000),
+      );
+      setTimeLeft(remaining);
+
+      if (remaining === 0) {
+        declineRequest();
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [currentRequest, declineRequest]);
+
+  if (!currentRequest) return null;
+
+  return (
+    <View className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+      <View className="bg-white mx-5 rounded-xl p-6 w-full max-w-sm">
+        <View className="items-center mb-4">
+          <Text className="text-2xl font-JakartaBold">
+            New Delivery Request
+          </Text>
+          <Text className="text-lg text-red-500 font-JakartaSemiBold">
+            {timeLeft}s
+          </Text>
+        </View>
+
+        <View className="mb-4">
+          <View className="flex flex-row items-center mb-2">
+            <View className="w-3 h-3 bg-green-500 rounded-full mr-2" />
+            <Text className="text-sm text-gray-500">Pickup</Text>
+          </View>
+          <Text className="font-JakartaSemiBold">
+            {currentRequest.pickupAddress}
+          </Text>
+        </View>
+
+        <View className="mb-4">
+          <View className="flex flex-row items-center mb-2">
+            <View className="w-3 h-3 bg-red-500 rounded-full mr-2" />
+            <Text className="text-sm text-gray-500">Delivery</Text>
+          </View>
+          <Text className="font-JakartaSemiBold">
+            {currentRequest.deliveryAddress}
+          </Text>
+        </View>
+
+        <View className="flex flex-row justify-between mb-6">
+          <View className="items-center">
+            <Text className="text-sm text-gray-500">Distance</Text>
+            <Text className="font-JakartaSemiBold">
+              {currentRequest.distance}
+            </Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-sm text-gray-500">Time</Text>
+            <Text className="font-JakartaSemiBold">
+              {currentRequest.estimatedTime}
+            </Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-sm text-gray-500">Earn</Text>
+            <Text className="font-JakartaSemiBold text-green-600">
+              ${currentRequest.fare}
+            </Text>
+          </View>
+        </View>
+
+        <View className="flex flex-row space-x-3">
+          <TouchableOpacity
+            onPress={declineRequest}
+            className="flex-1 bg-red-500 py-3 rounded-lg"
+          >
+            <Text className="text-white font-JakartaSemiBold text-center">
+              Decline
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={acceptRequest}
+            className="flex-1 bg-green-500 py-3 rounded-lg"
+          >
+            <Text className="text-white font-JakartaSemiBold text-center">
+              Accept
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 const Home = () => {
   // const { user } = useUser();
   const user = dummyUser;
@@ -109,6 +257,21 @@ const Home = () => {
   };
 
   const { setUserLocation, setDestinationLocation } = useLocationStore();
+  const {
+    isDriverMode,
+    isOnline,
+    isRegisteredDriver,
+    currentRequest,
+    activeDelivery,
+    todayEarnings,
+    totalDeliveries,
+    rating,
+    toggleDriverMode,
+    toggleOnlineStatus,
+    setCurrentRequest,
+    acceptRequest,
+    declineRequest,
+  } = useDriverModeStore();
 
   const handleSignOut = () => {
     signOut();
@@ -145,16 +308,192 @@ const Home = () => {
     })();
   }, []);
 
+  // Simulate incoming delivery requests when driver is online
+  useEffect(() => {
+    if (isDriverMode && isOnline && !currentRequest && !activeDelivery) {
+      const timer = setTimeout(
+        () => {
+          const randomRequest =
+            dummyDeliveryRequests[
+              Math.floor(Math.random() * dummyDeliveryRequests.length)
+            ];
+          setCurrentRequest({
+            ...randomRequest,
+            id: `req_${Date.now()}`,
+            expiresAt: Date.now() + 30000, // 30 seconds to respond
+          });
+        },
+        Math.random() * 10000 + 5000,
+      ); // Random between 5-15 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [
+    isDriverMode,
+    isOnline,
+    currentRequest,
+    activeDelivery,
+    setCurrentRequest,
+  ]);
+
   const handleDestinationPress = (location: {
     latitude: number;
     longitude: number;
     address: string;
   }) => {
     setDestinationLocation(location);
-
     router.push("/(root)/find-ride");
   };
 
+  const DriverHomeContent = () => (
+    <SafeAreaView className="bg-general-500 flex-1">
+      <View className="px-5 py-3">
+        {/* Driver Header */}
+        <View className="flex flex-row items-center justify-between mb-5">
+          <View className="flex-1">
+            <Text className="text-2xl font-JakartaExtraBold">
+              Welcome {user?.firstName}👋
+            </Text>
+            <Text className="text-gray-600">
+              {isOnline
+                ? "You're online and ready for deliveries"
+                : "You're offline"}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={handleSignOut}
+            className="justify-center items-center w-10 h-10 rounded-full bg-white"
+          >
+            <Image source={icons.out} className="w-4 h-4" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Online/Offline Control */}
+        <View className="bg-white rounded-xl p-4 mb-5 shadow-sm">
+          <View className="flex flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text className="text-lg font-JakartaSemiBold">
+                {isOnline ? "You're Online" : "You're Offline"}
+              </Text>
+              <Text className="text-gray-600 text-sm">
+                {isOnline
+                  ? "You're receiving delivery requests"
+                  : "Go online to start receiving delivery requests"}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={toggleOnlineStatus}
+              className={`px-6 py-3 rounded-lg ${
+                isOnline ? "bg-red-500" : "bg-green-500"
+              }`}
+            >
+              <Text className="text-white font-JakartaSemiBold">
+                {isOnline ? "Go Offline" : "Go Online"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Driver Stats */}
+        <View className="bg-white rounded-xl p-4 mb-5 shadow-sm">
+          <Text className="text-lg font-JakartaSemiBold mb-3">
+            Today's Stats
+          </Text>
+          <View className="flex flex-row justify-between">
+            <View className="items-center">
+              <Text className="text-2xl font-JakartaBold text-green-600">
+                ${todayEarnings.toFixed(2)}
+              </Text>
+              <Text className="text-sm text-gray-500">Earned</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-JakartaBold text-blue-600">
+                {totalDeliveries}
+              </Text>
+              <Text className="text-sm text-gray-500">Deliveries</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-JakartaBold text-orange-600">
+                {rating}⭐
+              </Text>
+              <Text className="text-sm text-gray-500">Rating</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Active Delivery */}
+        {activeDelivery && (
+          <TouchableOpacity
+            onPress={() =>
+              router.push(`/(root)/active-delivery?id=${activeDelivery.id}`)
+            }
+            className="bg-blue-50 rounded-xl p-4 mb-5 border border-blue-200"
+          >
+            <View className="flex flex-row items-center justify-between">
+              <View className="flex-1">
+                <Text className="text-lg font-JakartaSemiBold text-blue-800 mb-2">
+                  Active Delivery
+                </Text>
+                <Text className="text-blue-700 mb-1">
+                  To: {activeDelivery.deliveryAddress}
+                </Text>
+                <Text className="text-blue-600 text-sm">
+                  Customer: {activeDelivery.customerName}
+                </Text>
+                <Text className="text-blue-500 text-xs mt-1">
+                  Tap to view details and track delivery
+                </Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-2xl">📦</Text>
+                <Text className="text-blue-600 text-xs font-bold">ACTIVE</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {/* Status Message */}
+        {!isOnline && (
+          <View className="bg-gray-100 rounded-xl p-4 mb-5">
+            <Text className="text-gray-700 text-center">
+              Go online to start receiving delivery requests
+            </Text>
+          </View>
+        )}
+
+        {isOnline && !currentRequest && !activeDelivery && (
+          <View className="bg-green-50 rounded-xl p-4 mb-5">
+            <Text className="text-green-700 text-center">
+              You're online! Waiting for delivery requests...
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* Map for driver */}
+      <View className="flex-1 px-5 mb-5">
+        <View className="bg-transparent h-full rounded-xl overflow-hidden">
+          <Map />
+        </View>
+      </View>
+
+      {currentRequest && (
+        <DriverRequestModal
+          currentRequest={currentRequest}
+          declineRequest={declineRequest}
+          acceptRequest={acceptRequest}
+        />
+      )}
+    </SafeAreaView>
+  );
+
+  // If in driver mode, show driver interface
+  if (isDriverMode) {
+    return <DriverHomeContent />;
+  }
+
+  // Regular passenger interface
   return (
     <SafeAreaView className="bg-general-500">
       <FlatList
@@ -194,9 +533,11 @@ const Home = () => {
         ListHeaderComponent={
           <>
             <View className="flex flex-row items-center justify-between my-5">
-              <Text className="text-2xl font-JakartaExtraBold">
-                Welcome {user?.firstName}👋
-              </Text>
+              <View className="flex-1">
+                <Text className="text-2xl font-JakartaExtraBold">
+                  Welcome {user?.firstName}👋
+                </Text>
+              </View>
               <TouchableOpacity
                 onPress={handleSignOut}
                 className="justify-center items-center w-10 h-10 rounded-full bg-white"

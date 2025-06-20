@@ -11,8 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { icons } from "@/constants";
 
-// Extended dummy message thread data
+// Extended dummy message thread data - mapping driver IDs to chat threads
 const dummyMessageThreads = {
+  // Driver ID 1 - James Wilson
   "1": {
     id: "1",
     name: "James Wilson",
@@ -23,7 +24,7 @@ const dummyMessageThreads = {
     messages: [
       {
         id: "1",
-        text: "Hi! I'm on my way to pick you up",
+        text: "Hi! I'm on my way to pick you up for your ride to 456 Broadway",
         timestamp: "2:25 PM",
         sender: "driver",
         type: "text",
@@ -65,8 +66,132 @@ const dummyMessageThreads = {
       },
     ],
   },
+  // Driver ID 2 - David Brown
   "2": {
     id: "2",
+    name: "David Brown",
+    avatar:
+      "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/400x400/",
+    isDriver: true,
+    status: "offline",
+    messages: [
+      {
+        id: "1",
+        text: "Good morning! I'm your driver for today's ride to 321 Pine St",
+        timestamp: "Yesterday 8:00 AM",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "2",
+        text: "Good morning! What time will you arrive?",
+        timestamp: "Yesterday 8:01 AM",
+        sender: "user",
+        type: "text",
+      },
+      {
+        id: "3",
+        text: "I'm about 5 minutes away. I'm in a white Honda Accord",
+        timestamp: "Yesterday 8:05 AM",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "4",
+        text: "I'm on my way to pick you up",
+        timestamp: "Yesterday 8:10 AM",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "5",
+        text: "Thank you for choosing our service!",
+        timestamp: "Yesterday 8:45 AM",
+        sender: "driver",
+        type: "text",
+      },
+    ],
+  },
+  // Dynamic customer chats for active deliveries
+  customer_req_1: {
+    id: "customer_req_1",
+    name: "Sarah Johnson",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=400",
+    isDriver: false,
+    status: "online",
+    messages: [
+      {
+        id: "1",
+        text: "Hi! I'm your delivery driver. I've picked up your order from McDonald's",
+        timestamp: "Just now",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "2",
+        text: "Great! How long until you arrive?",
+        timestamp: "Just now",
+        sender: "customer",
+        type: "text",
+      },
+      {
+        id: "3",
+        text: "I'm about 8 minutes away. I'll text you when I'm outside",
+        timestamp: "Just now",
+        sender: "driver",
+        type: "text",
+      },
+    ],
+  },
+  customer_req_2: {
+    id: "customer_req_2",
+    name: "Mike Chen",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+    isDriver: false,
+    status: "online",
+    messages: [
+      {
+        id: "1",
+        text: "Hello! I'm delivering your pizza from Pizza Palace",
+        timestamp: "5 mins ago",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "2",
+        text: "Perfect! I'm in apartment 2B, second floor",
+        timestamp: "4 mins ago",
+        sender: "customer",
+        type: "text",
+      },
+      {
+        id: "3",
+        text: "Got it! I'm pulling up to your building now",
+        timestamp: "2 mins ago",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "4",
+        text: "I'm here! Should I come up or meet you downstairs?",
+        timestamp: "1 min ago",
+        sender: "driver",
+        type: "text",
+      },
+      {
+        id: "5",
+        text: "I'll come down in 30 seconds!",
+        timestamp: "Just now",
+        sender: "customer",
+        type: "text",
+      },
+    ],
+  },
+  // Support Team (keeping existing for backward compatibility)
+  support: {
+    id: "support",
     name: "Support Team",
     avatar:
       "https://ucarecdn.com/6ea6d83d-ef1a-483f-9106-837a3a5b3f67/-/preview/400x400/",
@@ -117,51 +242,94 @@ const dummyMessageThreads = {
       },
     ],
   },
-  "3": {
-    id: "3",
-    name: "David Brown",
-    avatar:
-      "https://ucarecdn.com/0330d85c-232e-4c30-bd04-e5e4d0e3d688/-/preview/400x400/",
-    isDriver: true,
-    status: "offline",
+};
+
+// Ride-specific context mapping
+const rideContexts = {
+  "1": {
+    rideId: "1",
+    origin: "123 Main St, New York, NY",
+    destination: "456 Broadway, New York, NY",
+    date: "15 January 2024",
+    time: "2:30 PM",
+  },
+  "2": {
+    rideId: "2",
+    origin: "789 Oak Ave, New York, NY",
+    destination: "321 Pine St, New York, NY",
+    date: "12 January 2024",
+    time: "9:15 AM",
+  },
+};
+
+// Delivery-specific context mapping
+const deliveryContexts = {
+  req_1: {
+    deliveryId: "req_1",
+    pickup: "McDonald's, 789 Main St",
+    delivery: "456 Oak Ave, Apt 2B",
+    customerName: "Sarah Johnson",
+    items: "Big Mac meal, Fries, Coke",
+    status: "On the way",
+  },
+  req_2: {
+    deliveryId: "req_2",
+    pickup: "Pizza Palace, 123 Broadway",
+    delivery: "789 Elm Street",
+    customerName: "Mike Chen",
+    items: "Large Pepperoni Pizza, Garlic Bread",
+    status: "Arriving soon",
+  },
+};
+
+// Function to generate dynamic customer chat based on delivery ID
+const generateCustomerChat = (deliveryId: string, deliveryContext: any) => {
+  if (!deliveryContext) return null;
+
+  return {
+    id: `customer_${deliveryId}`,
+    name: deliveryContext.customerName,
+    avatar: `https://images.unsplash.com/photo-${deliveryId === "req_1" ? "1494790108755-2616b612b5bb" : "1472099645785-5658abf4ff4e"}?w=400`,
+    isDriver: false,
+    status: "online",
     messages: [
       {
         id: "1",
-        text: "Good morning! I'm your driver for today's ride",
-        timestamp: "Yesterday 8:00 AM",
+        text: `Hi! I'm your delivery driver. I've picked up your order from ${deliveryContext.pickup}`,
+        timestamp: "Just now",
         sender: "driver",
         type: "text",
       },
       {
         id: "2",
-        text: "Good morning! What time will you arrive?",
-        timestamp: "Yesterday 8:01 AM",
-        sender: "user",
+        text: "Great! How long until you arrive?",
+        timestamp: "Just now",
+        sender: "customer",
         type: "text",
       },
       {
         id: "3",
-        text: "I'm about 5 minutes away. I'm in a white Honda Accord",
-        timestamp: "Yesterday 8:05 AM",
+        text: "I'm about 8 minutes away. I'll text you when I'm outside",
+        timestamp: "Just now",
         sender: "driver",
         type: "text",
       },
       {
         id: "4",
-        text: "I'm on my way to pick you up",
-        timestamp: "Yesterday 8:10 AM",
-        sender: "driver",
+        text: "Perfect! I'll be waiting. Do you need my apartment number?",
+        timestamp: "Just now",
+        sender: "customer",
         type: "text",
       },
       {
         id: "5",
-        text: "Thank you for choosing our service!",
-        timestamp: "Yesterday 8:45 AM",
+        text: "Yes please, that would be helpful!",
+        timestamp: "Just now",
         sender: "driver",
         type: "text",
       },
     ],
-  },
+  };
 };
 
 const MessageBubble = ({
@@ -192,9 +360,24 @@ const MessageBubble = ({
 );
 
 const MessageThread = () => {
-  const { id } = useLocalSearchParams();
-  const threadData =
-    dummyMessageThreads[id as keyof typeof dummyMessageThreads];
+  const { id, rideId, deliveryId } = useLocalSearchParams();
+
+  // First try to get existing thread data
+  let threadData = dummyMessageThreads[id as keyof typeof dummyMessageThreads];
+
+  // If no existing thread and it's a customer chat, generate dynamic data
+  if (!threadData && id.toString().startsWith("customer_") && deliveryId) {
+    const deliveryContext =
+      deliveryContexts[deliveryId as keyof typeof deliveryContexts];
+    threadData = generateCustomerChat(deliveryId as string, deliveryContext);
+  }
+
+  const rideContext = rideId
+    ? rideContexts[rideId as keyof typeof rideContexts]
+    : null;
+  const deliveryContext = deliveryId
+    ? deliveryContexts[deliveryId as keyof typeof deliveryContexts]
+    : null;
 
   if (!threadData) {
     return (
@@ -206,38 +389,96 @@ const MessageThread = () => {
     );
   }
 
+  const isDriverChat = id.toString().startsWith("customer_");
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex flex-row items-center px-5 py-3 border-b border-gray-100 bg-white">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Image source={icons.backArrow} className="w-6 h-6" />
-        </TouchableOpacity>
+      <View className="flex flex-col border-b border-gray-100 bg-white">
+        <View className="flex flex-row items-center px-5 py-3">
+          <TouchableOpacity onPress={() => router.back()} className="mr-3">
+            <Image source={icons.backArrow} className="w-6 h-6" />
+          </TouchableOpacity>
 
-        <View className="relative mr-3">
-          <Image
-            source={{ uri: threadData.avatar }}
-            className="w-10 h-10 rounded-full"
-          />
-          {threadData.isDriver && (
-            <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" />
-          )}
+          <View className="relative mr-3">
+            <Image
+              source={{ uri: threadData.avatar }}
+              className="w-10 h-10 rounded-full"
+            />
+            {threadData.isDriver && (
+              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" />
+            )}
+            {!threadData.isDriver && isDriverChat && (
+              <View className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white" />
+            )}
+          </View>
+
+          <View className="flex-1">
+            <Text className="text-lg font-JakartaSemiBold">
+              {threadData.name}
+            </Text>
+            <Text className="text-sm text-gray-500">
+              {threadData.status === "online"
+                ? "Active now"
+                : "Last seen recently"}
+              {isDriverChat && " • Customer"}
+            </Text>
+          </View>
+
+          <View className="flex flex-row space-x-2">
+            <TouchableOpacity className="p-2">
+              <Image source={icons.star} className="w-5 h-5" tintColor="#666" />
+            </TouchableOpacity>
+            <TouchableOpacity className="p-2">
+              <Image source={icons.chat} className="w-5 h-5" tintColor="#666" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View className="flex-1">
-          <Text className="text-lg font-JakartaSemiBold">
-            {threadData.name}
-          </Text>
-          <Text className="text-sm text-gray-500">
-            {threadData.status === "online"
-              ? "Active now"
-              : "Last seen recently"}
-          </Text>
-        </View>
+        {/* Ride Context Banner */}
+        {rideContext && (
+          <View className="px-5 py-3 bg-blue-50 border-t border-blue-100">
+            <Text className="text-sm font-JakartaSemiBold text-blue-800 mb-1">
+              Ride on {rideContext.date} at {rideContext.time}
+            </Text>
+            <View className="flex flex-row items-center">
+              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+              <Text className="text-xs text-blue-700 flex-1" numberOfLines={1}>
+                From: {rideContext.origin}
+              </Text>
+            </View>
+            <View className="flex flex-row items-center mt-1">
+              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
+              <Text className="text-xs text-blue-700 flex-1" numberOfLines={1}>
+                To: {rideContext.destination}
+              </Text>
+            </View>
+          </View>
+        )}
 
-        <TouchableOpacity className="p-2">
-          <Image source={icons.chat} className="w-5 h-5" tintColor="#666" />
-        </TouchableOpacity>
+        {/* Delivery Context Banner */}
+        {deliveryContext && (
+          <View className="px-5 py-3 bg-green-50 border-t border-green-100">
+            <Text className="text-sm font-JakartaSemiBold text-green-800 mb-1">
+              Active Delivery • {deliveryContext.status}
+            </Text>
+            <View className="flex flex-row items-center">
+              <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+              <Text className="text-xs text-green-700 flex-1" numberOfLines={1}>
+                Pickup: {deliveryContext.pickup}
+              </Text>
+            </View>
+            <View className="flex flex-row items-center mt-1">
+              <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
+              <Text className="text-xs text-green-700 flex-1" numberOfLines={1}>
+                Delivery: {deliveryContext.delivery}
+              </Text>
+            </View>
+            <Text className="text-xs text-green-600 mt-1">
+              Items: {deliveryContext.items}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Messages */}
@@ -245,7 +486,12 @@ const MessageThread = () => {
         data={threadData.messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <MessageBubble message={item} isUser={item.sender === "user"} />
+          <MessageBubble
+            message={item}
+            isUser={
+              isDriverChat ? item.sender === "driver" : item.sender === "user"
+            }
+          />
         )}
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
@@ -255,7 +501,9 @@ const MessageThread = () => {
       <View className="flex flex-row items-center px-4 py-3 border-t border-gray-100 bg-white">
         <View className="flex-1 flex flex-row items-center bg-gray-100 rounded-full px-4 py-2 mr-3">
           <TextInput
-            placeholder="Type a message..."
+            placeholder={
+              isDriverChat ? "Message customer..." : "Type a message..."
+            }
             className="flex-1 text-base"
             multiline
             maxLength={500}

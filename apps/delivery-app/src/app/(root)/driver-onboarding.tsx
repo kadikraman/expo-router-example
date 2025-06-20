@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import CustomButton from "@/components/CustomButton";
 import { icons } from "@/constants";
+import { useDriverModeStore } from "@/store";
 
 // Driver onboarding requirements
 const requirements = [
@@ -70,6 +71,14 @@ const benefits = [
 ];
 
 const DriverOnboarding = () => {
+  const { isRegisteredDriver, setDriverRegistration } = useDriverModeStore();
+
+  const handleStartApplication = () => {
+    // Mark user as a registered driver when they start the application process
+    setDriverRegistration(true);
+    router.push("/(root)/driver-application");
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
@@ -86,12 +95,32 @@ const DriverOnboarding = () => {
         <View className="items-center px-5 py-8 bg-gradient-to-b from-green-50 to-white">
           <Text className="text-6xl mb-4">🚗</Text>
           <Text className="text-2xl font-JakartaBold text-center mb-2">
-            Start Earning Today!
+            {isRegisteredDriver
+              ? "Welcome Back, Driver!"
+              : "Start Earning Today!"}
           </Text>
           <Text className="text-gray-600 text-center">
-            Join thousands of drivers making money on their own schedule
+            {isRegisteredDriver
+              ? "You're all set! Switch to driver mode from the home screen to start earning."
+              : "Join thousands of drivers making money on their own schedule"}
           </Text>
         </View>
+
+        {/* Registration Status */}
+        {isRegisteredDriver && (
+          <View className="mx-5 mt-5 p-5 bg-green-50 rounded-xl border border-green-200">
+            <View className="flex flex-row items-center mb-2">
+              <Text className="text-2xl mr-3">✅</Text>
+              <Text className="text-lg font-JakartaSemiBold text-green-800">
+                Driver Registration Complete
+              </Text>
+            </View>
+            <Text className="text-green-700">
+              You can now switch to driver mode from the home screen to start
+              receiving delivery requests and earning money!
+            </Text>
+          </View>
+        )}
 
         {/* Benefits Section */}
         <View className="mx-5 mt-5 p-5 bg-white rounded-xl shadow-sm shadow-neutral-300">
@@ -172,7 +201,7 @@ const DriverOnboarding = () => {
             <View className="flex-1">
               <Text className="font-JakartaSemiBold">Background Check</Text>
               <Text className="text-gray-600 text-sm">
-                We'll verify your documents and run safety checks
+                We&apos;ll verify your documents and run safety checks
               </Text>
               <Text className="text-blue-600 text-xs">1-3 business days</Text>
             </View>
@@ -242,20 +271,41 @@ const DriverOnboarding = () => {
 
         {/* Action Buttons */}
         <View className="mx-5 mt-5 mb-10">
-          <CustomButton
-            title="Start Application"
-            onPress={() => router.push("/(root)/driver-application")}
-            className="mb-3"
-          />
+          {!isRegisteredDriver ? (
+            <>
+              <CustomButton
+                title="Start Application"
+                onPress={handleStartApplication}
+                className="mb-3"
+              />
 
-          <TouchableOpacity
-            className="items-center py-3"
-            onPress={() => router.push("/(root)/driver-faq")}
-          >
-            <Text className="text-blue-600 font-JakartaSemiBold">
-              Have questions? View FAQ
-            </Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                className="items-center py-3"
+                onPress={() => router.push("/(root)/driver-faq")}
+              >
+                <Text className="text-blue-600 font-JakartaSemiBold">
+                  Have questions? View FAQ
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <CustomButton
+                title="Go to Home & Switch to Driver Mode"
+                onPress={() => router.push("/(root)/(tabs)/home")}
+                className="mb-3 bg-green-500"
+              />
+
+              <TouchableOpacity
+                className="items-center py-3"
+                onPress={() => router.push("/(root)/driver-faq")}
+              >
+                <Text className="text-blue-600 font-JakartaSemiBold">
+                  Driver FAQ & Support
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
