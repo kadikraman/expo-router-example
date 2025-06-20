@@ -95,6 +95,30 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="delivery-locations"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="delivery-type"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="delivery-vehicle"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="delivery-request"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

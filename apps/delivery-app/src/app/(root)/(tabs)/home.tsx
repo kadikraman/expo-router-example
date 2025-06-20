@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
 import { icons, images } from "@/constants";
@@ -398,7 +397,7 @@ const Home = () => {
         {/* Driver Stats */}
         <View className="bg-white rounded-xl p-4 mb-5 shadow-sm">
           <Text className="text-lg font-JakartaSemiBold mb-3">
-            Today's Stats
+            Today&apos;s Stats
           </Text>
           <View className="flex flex-row justify-between">
             <View className="items-center">
@@ -465,7 +464,7 @@ const Home = () => {
         {isOnline && !currentRequest && !activeDelivery && (
           <View className="bg-green-50 rounded-xl p-4 mb-5">
             <Text className="text-green-700 text-center">
-              You're online! Waiting for delivery requests...
+              You&apos;re online! Waiting for delivery requests...
             </Text>
           </View>
         )}
@@ -498,16 +497,7 @@ const Home = () => {
     <SafeAreaView className="bg-general-500">
       <FlatList
         data={recentRides?.slice(0, 5)}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              router.push(`/(root)/ride-details?id=${item.ride_id}`)
-            }
-          >
-            <RideCard ride={item} />
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <RideCard ride={item} />}
         className="px-5"
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
@@ -533,11 +523,9 @@ const Home = () => {
         ListHeaderComponent={
           <>
             <View className="flex flex-row items-center justify-between my-5">
-              <View className="flex-1">
-                <Text className="text-2xl font-JakartaExtraBold">
-                  Welcome {user?.firstName}👋
-                </Text>
-              </View>
+              <Text className="text-2xl font-JakartaExtraBold">
+                Welcome {user?.firstName ?? user?.fullName}👋
+              </Text>
               <TouchableOpacity
                 onPress={handleSignOut}
                 className="justify-center items-center w-10 h-10 rounded-full bg-white"
@@ -546,22 +534,73 @@ const Home = () => {
               </TouchableOpacity>
             </View>
 
-            <GoogleTextInput
-              icon={icons.search}
-              containerStyle="bg-white shadow-md shadow-neutral-300"
-              handlePress={handleDestinationPress}
-            />
+            {/* Driver Mode Toggle */}
+            {isRegisteredDriver && (
+              <View className="bg-white rounded-xl p-4 mb-5 shadow-sm">
+                <View className="flex flex-row items-center justify-between">
+                  <View className="flex-1">
+                    <Text className="text-lg font-JakartaSemiBold">
+                      Driver Mode
+                    </Text>
+                    <Text className="text-gray-600 text-sm">
+                      Switch to driver mode to accept deliveries
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={toggleDriverMode}
+                    className="px-4 py-2 bg-blue-500 rounded-lg"
+                  >
+                    <Text className="text-white font-JakartaSemiBold">
+                      Go Online
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
-            <>
-              <Text className="text-xl font-JakartaBold mt-5 mb-3">
+            {/* Main Delivery Service Section */}
+            <View className="my-5">
+              <Text className="text-xl font-JakartaSemiBold mb-3">
+                Send or Receive Packages
+              </Text>
+
+              {/* Main Book Package Delivery Button */}
+              <TouchableOpacity
+                onPress={() => router.push("/(root)/delivery-options")}
+                className="bg-white rounded-2xl p-6 shadow-sm shadow-neutral-300 mb-5"
+              >
+                <View className="flex flex-row items-center">
+                  <View className="w-12 h-12 bg-blue-100 rounded-xl items-center justify-center mr-4">
+                    <Text className="text-2xl">📦</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-lg font-JakartaSemiBold mb-1">
+                      Book Package Delivery
+                    </Text>
+                    <Text className="text-gray-600 text-sm">
+                      Send or receive packages anywhere
+                    </Text>
+                  </View>
+                  <Image
+                    source={icons.to}
+                    className="w-5 h-5"
+                    tintColor="#666"
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* Current Location */}
+            <View className="my-5">
+              <Text className="text-xl font-JakartaSemiBold mb-3">
                 Your current location
               </Text>
               <View className="flex flex-row items-center bg-transparent h-[300px]">
                 <Map />
               </View>
-            </>
+            </View>
 
-            <Text className="text-xl font-JakartaBold mt-5 mb-3">
+            <Text className="text-xl font-JakartaSemiBold mt-5 mb-3">
               Recent Rides
             </Text>
           </>
