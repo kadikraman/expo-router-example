@@ -1,14 +1,24 @@
 // import { useUser } from "@clerk/clerk-expo";
-import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import RideCard from "@/components/RideCard";
 import { images } from "@/constants";
 import { Ride } from "@/types/type";
+import React from "react";
 
-// Dummy rides data
-const dummyRides: Ride[] = [
+// Dummy rides data - with ride_id for navigation
+const dummyRides: (Ride & { ride_id: string })[] = [
   {
+    ride_id: "1",
     origin_address: "123 Main St, New York, NY",
     destination_address: "456 Broadway, New York, NY",
     origin_latitude: 40.7128,
@@ -16,7 +26,7 @@ const dummyRides: Ride[] = [
     destination_latitude: 40.7589,
     destination_longitude: -73.9851,
     ride_time: 25,
-    fare_price: 18.5,
+    fare_price: 15.5,
     payment_status: "paid",
     driver_id: 1,
     user_id: "123",
@@ -28,13 +38,14 @@ const dummyRides: Ride[] = [
     },
   },
   {
-    origin_address: "789 Park Ave, New York, NY",
-    destination_address: "321 5th Ave, New York, NY",
+    ride_id: "2",
+    origin_address: "789 Oak Ave, New York, NY",
+    destination_address: "321 Pine St, New York, NY",
     origin_latitude: 40.7614,
     origin_longitude: -73.9776,
     destination_latitude: 40.7505,
     destination_longitude: -73.9934,
-    ride_time: 15,
+    ride_time: 18,
     fare_price: 12.75,
     payment_status: "paid",
     driver_id: 2,
@@ -47,6 +58,7 @@ const dummyRides: Ride[] = [
     },
   },
   {
+    ride_id: "3",
     origin_address: "111 Wall St, New York, NY",
     destination_address: "555 Madison Ave, New York, NY",
     origin_latitude: 40.7074,
@@ -66,6 +78,7 @@ const dummyRides: Ride[] = [
     },
   },
   {
+    ride_id: "4",
     origin_address: "777 Lexington Ave, New York, NY",
     destination_address: "999 3rd Ave, New York, NY",
     origin_latitude: 40.7649,
@@ -86,12 +99,26 @@ const dummyRides: Ride[] = [
   },
 ];
 
+// Dummy user data - consistent across app
+const dummyUser = {
+  id: "123",
+  firstName: "John",
+  lastName: "Doe",
+  fullName: "John Doe",
+  primaryEmailAddress: {
+    emailAddress: "john.doe@example.com",
+  },
+  emailAddresses: [{ emailAddress: "john.doe@example.com" }],
+  primaryPhoneNumber: {
+    phoneNumber: "+1 (555) 123-4567",
+  },
+  imageUrl:
+    "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
+};
+
 const Rides = () => {
   // const { user } = useUser();
-  const user = {
-    fullName: "John Doe",
-    emailAddresses: [{ emailAddress: "john.doe@example.com" }],
-  };
+  const user = dummyUser;
 
   // Replace useFetch with dummy data
   const recentRides = dummyRides;
@@ -102,7 +129,15 @@ const Rides = () => {
     <SafeAreaView className="flex-1 bg-white">
       <FlatList
         data={recentRides}
-        renderItem={({ item }) => <RideCard ride={item} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() =>
+              router.push(`/(root)/ride-details?id=${item.ride_id}`)
+            }
+          >
+            <RideCard ride={item} />
+          </TouchableOpacity>
+        )}
         keyExtractor={(item, index) => index.toString()}
         className="px-5"
         keyboardShouldPersistTaps="handled"
@@ -112,7 +147,7 @@ const Rides = () => {
         ListEmptyComponent={() => (
           <View className="flex flex-col items-center justify-center">
             {!loading ? (
-              <>
+              <React.Fragment>
                 <Image
                   source={images.noResult}
                   className="w-40 h-40"
@@ -120,16 +155,14 @@ const Rides = () => {
                   resizeMode="contain"
                 />
                 <Text className="text-sm">No recent rides found</Text>
-              </>
+              </React.Fragment>
             ) : (
               <ActivityIndicator size="small" color="#000" />
             )}
           </View>
         )}
         ListHeaderComponent={
-          <>
-            <Text className="text-2xl font-JakartaBold my-5">All Rides</Text>
-          </>
+          <Text className="text-2xl font-JakartaBold my-5">All Rides</Text>
         }
       />
     </SafeAreaView>

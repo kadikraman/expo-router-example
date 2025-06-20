@@ -17,6 +17,18 @@ const Layout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="ride-details"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="message-thread"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

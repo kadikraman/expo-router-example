@@ -20,9 +20,10 @@ import { icons, images } from "@/constants";
 import { useLocationStore } from "@/store";
 import { Ride } from "@/types/type";
 
-// Dummy rides data
-const dummyRides: Ride[] = [
+// Dummy rides data - with ride_id for navigation
+const dummyRides: (Ride & { ride_id: string })[] = [
   {
+    ride_id: "1",
     origin_address: "123 Main St, New York, NY",
     destination_address: "456 Broadway, New York, NY",
     origin_latitude: 40.7128,
@@ -30,7 +31,7 @@ const dummyRides: Ride[] = [
     destination_latitude: 40.7589,
     destination_longitude: -73.9851,
     ride_time: 25,
-    fare_price: 18.5,
+    fare_price: 15.5,
     payment_status: "paid",
     driver_id: 1,
     user_id: "123",
@@ -42,13 +43,14 @@ const dummyRides: Ride[] = [
     },
   },
   {
-    origin_address: "789 Park Ave, New York, NY",
-    destination_address: "321 5th Ave, New York, NY",
+    ride_id: "2",
+    origin_address: "789 Oak Ave, New York, NY",
+    destination_address: "321 Pine St, New York, NY",
     origin_latitude: 40.7614,
     origin_longitude: -73.9776,
     destination_latitude: 40.7505,
     destination_longitude: -73.9934,
-    ride_time: 15,
+    ride_time: 18,
     fare_price: 12.75,
     payment_status: "paid",
     driver_id: 2,
@@ -61,6 +63,7 @@ const dummyRides: Ride[] = [
     },
   },
   {
+    ride_id: "3",
     origin_address: "111 Wall St, New York, NY",
     destination_address: "555 Madison Ave, New York, NY",
     origin_latitude: 40.7074,
@@ -81,12 +84,25 @@ const dummyRides: Ride[] = [
   },
 ];
 
+// Dummy user data - consistent with profile
+const dummyUser = {
+  id: "123",
+  firstName: "John",
+  lastName: "Doe",
+  fullName: "John Doe",
+  primaryEmailAddress: {
+    emailAddress: "john.doe@example.com",
+  },
+  primaryPhoneNumber: {
+    phoneNumber: "+1 (555) 123-4567",
+  },
+  imageUrl:
+    "https://ucarecdn.com/dae59f69-2c1f-48c3-a883-017bcf0f9950/-/preview/400x400/",
+};
+
 const Home = () => {
   // const { user } = useUser();
-  const user = {
-    id: "123",
-    firstName: "John",
-  };
+  const user = dummyUser;
   // const { signOut } = useAuth();
   const signOut = () => {
     console.log("signOut");
@@ -143,7 +159,15 @@ const Home = () => {
     <SafeAreaView className="bg-general-500">
       <FlatList
         data={recentRides?.slice(0, 5)}
-        renderItem={({ item }) => <RideCard ride={item} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() =>
+              router.push(`/(root)/ride-details?id=${item.ride_id}`)
+            }
+          >
+            <RideCard ride={item} />
+          </TouchableOpacity>
+        )}
         keyExtractor={(item, index) => index.toString()}
         className="px-5"
         keyboardShouldPersistTaps="handled"
