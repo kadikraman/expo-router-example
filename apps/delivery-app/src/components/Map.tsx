@@ -71,7 +71,9 @@ const Map = () => {
   // const { data: drivers, loading, error } = useFetch<Driver[]>("/(api)/driver");
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [lastCalculation, setLastCalculation] = useState<number>(0);
-  const [routeCoordinates, setRouteCoordinates] = useState<{ latitude: number; longitude: number }[]>([]);
+  const [routeCoordinates, setRouteCoordinates] = useState<
+    { latitude: number; longitude: number }[]
+  >([]);
   const CALCULATION_THROTTLE = 5000; // 5 seconds between calculations
 
   useEffect(() => {
@@ -101,16 +103,18 @@ const Map = () => {
         originLongitude: userLongitude,
         destinationLatitude,
         destinationLongitude,
-      }).then((coordinates) => {
-        setRouteCoordinates(coordinates);
-      }).catch((error) => {
-        console.warn("Failed to get route coordinates:", error);
-        // Fallback to straight line
-        setRouteCoordinates([
-          { latitude: userLatitude, longitude: userLongitude },
-          { latitude: destinationLatitude, longitude: destinationLongitude },
-        ]);
-      });
+      })
+        .then((coordinates) => {
+          setRouteCoordinates(coordinates);
+        })
+        .catch((error) => {
+          console.warn("Failed to get route coordinates:", error);
+          // Fallback to straight line
+          setRouteCoordinates([
+            { latitude: userLatitude, longitude: userLongitude },
+            { latitude: destinationLatitude, longitude: destinationLongitude },
+          ]);
+        });
     } else {
       setRouteCoordinates([]);
     }
@@ -138,13 +142,15 @@ const Map = () => {
         userLongitude,
         destinationLatitude,
         destinationLongitude,
-      }).then((drivers) => {
-        if (drivers) {
-          setDrivers(drivers as MarkerData[]);
-        }
-      }).catch((error) => {
-        console.warn("Failed to calculate driver times:", error);
-      });
+      })
+        .then((drivers) => {
+          if (drivers) {
+            setDrivers(drivers as MarkerData[]);
+          }
+        })
+        .catch((error) => {
+          console.warn("Failed to calculate driver times:", error);
+        });
     }
   }, [
     markers,
@@ -184,15 +190,15 @@ const Map = () => {
         markers={[
           ...(userLatitude && userLongitude
             ? [
-              {
-                id: "origin",
-                coordinates: {
-                  latitude: userLatitude,
-                  longitude: userLongitude,
+                {
+                  id: "origin",
+                  coordinates: {
+                    latitude: userLatitude,
+                    longitude: userLongitude,
+                  },
+                  title: "Origin",
                 },
-                title: "Origin",
-              },
-            ]
+              ]
             : []),
           ...markers.map((marker) => ({
             id: String(marker.id),
@@ -218,13 +224,13 @@ const Map = () => {
         polylines={
           routeCoordinates.length > 0
             ? [
-              {
-                id: "route",
-                coordinates: routeCoordinates,
-                strokeColor: "#0286FF",
-                strokeWidth: 4,
-              },
-            ]
+                {
+                  id: "route",
+                  coordinates: routeCoordinates,
+                  strokeColor: "#0286FF",
+                  strokeWidth: 4,
+                },
+              ]
             : []
         }
       />
@@ -243,15 +249,15 @@ const Map = () => {
         markers={[
           ...(userLatitude && userLongitude
             ? [
-              {
-                id: "origin",
-                coordinates: {
-                  latitude: userLatitude,
-                  longitude: userLongitude,
+                {
+                  id: "origin",
+                  coordinates: {
+                    latitude: userLatitude,
+                    longitude: userLongitude,
+                  },
+                  title: "Origin",
                 },
-                title: "Origin",
-              },
-            ]
+              ]
             : []),
           ...markers.map((marker) => ({
             id: String(marker.id),
@@ -277,13 +283,13 @@ const Map = () => {
         polylines={
           routeCoordinates.length > 0
             ? [
-              {
-                id: "route",
-                coordinates: routeCoordinates,
-                strokeColor: "#0286FF",
-                strokeWidth: 4,
-              },
-            ]
+                {
+                  id: "route",
+                  coordinates: routeCoordinates,
+                  strokeColor: "#0286FF",
+                  strokeWidth: 4,
+                },
+              ]
             : []
         }
       />

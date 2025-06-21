@@ -181,10 +181,11 @@ const DeliveryVehicle = () => {
               <TouchableOpacity
                 key={vehicle.id}
                 onPress={() => setSelectedVehicle(vehicle.id)}
-                className={`p-4 rounded-xl mb-3 border-2 ${isSelected
+                className={`p-4 rounded-xl mb-3 border-2 ${
+                  isSelected
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 bg-white"
-                  }`}
+                }`}
               >
                 <View className="flex flex-row items-center">
                   <Text className="text-3xl mr-4">{vehicle.icon}</Text>

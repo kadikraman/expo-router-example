@@ -53,7 +53,8 @@ const getDummyChats = (isDriverMode: boolean, activeDelivery: any) => {
       name: activeDelivery.customerName,
       lastMessage: "I'll be waiting outside",
       timestamp: "Just now",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=400",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=400",
       unreadCount: 2,
       isDriver: false,
       type: "delivery",
@@ -69,7 +70,8 @@ const getDummyChats = (isDriverMode: boolean, activeDelivery: any) => {
         name: "Michael Johnson",
         lastMessage: "I'm heading to the pickup location now.",
         timestamp: "5 min ago",
-        avatar: "https://ucarecdn.com/fdfc54df-9d24-40f7-b7d3-6f391561c0db/-/preview/400x400/",
+        avatar:
+          "https://ucarecdn.com/fdfc54df-9d24-40f7-b7d3-6f391561c0db/-/preview/400x400/",
         unreadCount: 1,
         isDriver: true,
         type: "delivery",
@@ -80,12 +82,13 @@ const getDummyChats = (isDriverMode: boolean, activeDelivery: any) => {
         name: "Sarah Johnson",
         lastMessage: "Great! How long until you arrive?",
         timestamp: "20 min ago",
-        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=400",
+        avatar:
+          "https://images.unsplash.com/photo-1494790108755-2616b612b5bb?w=400",
         unreadCount: 0,
         isDriver: false,
         type: "delivery",
         isActive: false,
-      }
+      },
     );
   }
 
@@ -163,7 +166,7 @@ const Chat = () => {
     <SafeAreaView className="flex-1 bg-white">
       <View className="px-5 py-3 border-b border-gray-100">
         <Text className="text-2xl font-JakartaBold">Messages</Text>
-        {(isDriverMode || chats.some(chat => chat.type === "delivery")) && (
+        {(isDriverMode || chats.some((chat) => chat.type === "delivery")) && (
           <Text className="text-sm text-gray-600 mt-1">
             {isDriverMode ? "Driver conversations" : "Your conversations"}
           </Text>
@@ -189,8 +192,7 @@ const Chat = () => {
             <Text className="text-base mt-2 text-center px-7">
               {isDriverMode
                 ? "Start accepting deliveries to chat with customers"
-                : "Start a conversation with drivers or support"
-              }
+                : "Start a conversation with drivers or support"}
             </Text>
           </View>
         )}

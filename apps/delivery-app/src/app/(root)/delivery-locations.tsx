@@ -28,18 +28,21 @@ const dummyLocations = [
   {
     address: "321 Pine Street, Berkeley, CA 94705",
     latitude: 37.8715,
-    longitude: -122.2730,
+    longitude: -122.273,
   },
   {
     address: "555 Oak Avenue, Palo Alto, CA 94301",
     latitude: 37.4419,
-    longitude: -122.1430,
+    longitude: -122.143,
   },
 ];
 
 const DeliveryLocations = () => {
   const { type } = useLocalSearchParams(); // 'send' or 'receive'
   const { setUserLocation, setDestinationLocation } = useLocationStore();
+
+  // Flag to use new streamlined flow
+  const USE_STREAMLINED_FLOW = true; // Set to true to use new combined screen
 
   const [pickupLocation, setPickupLocation] = useState<{
     latitude: number;
@@ -58,11 +61,14 @@ const DeliveryLocations = () => {
 
   const handlePickupLocationSet = () => {
     // Use dummy data for now
-    const randomLocation = dummyLocations[Math.floor(Math.random() * dummyLocations.length)];
-    const location = pickupAddress ? {
-      ...randomLocation,
-      address: pickupAddress
-    } : randomLocation;
+    const randomLocation =
+      dummyLocations[Math.floor(Math.random() * dummyLocations.length)];
+    const location = pickupAddress
+      ? {
+          ...randomLocation,
+          address: pickupAddress,
+        }
+      : randomLocation;
 
     setPickupLocation(location);
     setUserLocation(location);
@@ -73,11 +79,14 @@ const DeliveryLocations = () => {
 
   const handleDeliveryLocationSet = () => {
     // Use dummy data for now
-    const randomLocation = dummyLocations[Math.floor(Math.random() * dummyLocations.length)];
-    const location = deliveryAddress ? {
-      ...randomLocation,
-      address: deliveryAddress
-    } : randomLocation;
+    const randomLocation =
+      dummyLocations[Math.floor(Math.random() * dummyLocations.length)];
+    const location = deliveryAddress
+      ? {
+          ...randomLocation,
+          address: deliveryAddress,
+        }
+      : randomLocation;
 
     setDeliveryLocation(location);
     setDestinationLocation(location);
@@ -88,10 +97,17 @@ const DeliveryLocations = () => {
 
   const handleContinue = () => {
     if (pickupLocation && deliveryLocation) {
-      // Pass the delivery type and locations to the next screen
-      router.push(
-        `/(root)/delivery-type?type=${type}&pickup=${encodeURIComponent(pickupLocation.address)}&delivery=${encodeURIComponent(deliveryLocation.address)}`,
-      );
+      if (USE_STREAMLINED_FLOW) {
+        // New streamlined flow - go directly to combined package + vehicle screen
+        router.push(
+          `/(root)/delivery-package-vehicle?type=${type}&pickup=${encodeURIComponent(pickupLocation.address)}&delivery=${encodeURIComponent(deliveryLocation.address)}`,
+        );
+      } else {
+        // Original flow - go to package details first
+        router.push(
+          `/(root)/delivery-type?type=${type}&pickup=${encodeURIComponent(pickupLocation.address)}&delivery=${encodeURIComponent(deliveryLocation.address)}`,
+        );
+      }
     }
   };
 
@@ -114,7 +130,10 @@ const DeliveryLocations = () => {
         <View className="w-6" />
       </View>
 
-      <ScrollView className="flex-1 px-5 py-6" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5 py-6"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header Info */}
         <View className="bg-blue-50 rounded-xl p-4 mb-6">
           <View className="flex flex-row items-center">
@@ -167,7 +186,9 @@ const DeliveryLocations = () => {
             className="bg-green-500 py-3 px-4 rounded-lg mb-2"
           >
             <Text className="text-white font-JakartaSemiBold text-center">
-              {pickupLocation ? "Update Pickup Location" : "Set Pickup Location"}
+              {pickupLocation
+                ? "Update Pickup Location"
+                : "Set Pickup Location"}
             </Text>
           </TouchableOpacity>
 
@@ -207,7 +228,9 @@ const DeliveryLocations = () => {
             className="bg-red-500 py-3 px-4 rounded-lg mb-2"
           >
             <Text className="text-white font-JakartaSemiBold text-center">
-              {deliveryLocation ? "Update Delivery Location" : "Set Delivery Location"}
+              {deliveryLocation
+                ? "Update Delivery Location"
+                : "Set Delivery Location"}
             </Text>
           </TouchableOpacity>
 
@@ -243,8 +266,8 @@ const DeliveryLocations = () => {
                 Using Demo Locations
               </Text>
               <Text className="text-yellow-700 text-sm">
-                Enter any address and click the set location button.
-                Real Google Maps integration will be added later.
+                Enter any address and click the set location button. Real Google
+                Maps integration will be added later.
               </Text>
             </View>
           </View>
