@@ -1,12 +1,30 @@
-import { Stack } from "expo-router";
+import { Stack, SplashScreen } from "expo-router";
 import "../../global.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useAuthStore } from "@/utils/authStore";
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
-  const { isLoggedIn, shouldCreateAccount, hasCompletedOnboarding } =
-    useAuthStore();
+  const {
+    isLoggedIn,
+    shouldCreateAccount,
+    hasCompletedOnboarding,
+    _hasHydrated,
+  } = useAuthStore();
+
+  // https://zustand.docs.pmnd.rs/integrations/persisting-store-data#how-can-i-check-if-my-store-has-been-hydrated
+  // Hide the splash screen after the store has been hydrated
+  useEffect(() => {
+    if (_hasHydrated) {
+      SplashScreen.hideAsync();
+    }
+  }, [_hasHydrated]);
+
+  if (!_hasHydrated) {
+    return null;
+  }
 
   return (
     <React.Fragment>

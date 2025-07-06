@@ -7,11 +7,13 @@ type UserState = {
   shouldCreateAccount: boolean;
   hasCompletedOnboarding: boolean;
   isVip: boolean;
+  _hasHydrated: boolean;
   logIn: () => void;
   logOut: () => void;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
   logInAsVip: () => void;
+  setHasHydrated: (value: boolean) => void;
 };
 
 export const useAuthStore = create(
@@ -21,6 +23,7 @@ export const useAuthStore = create(
       shouldCreateAccount: false,
       hasCompletedOnboarding: false,
       isVip: false,
+      _hasHydrated: false,
       logIn: () => {
         set((state) => {
           return {
@@ -63,6 +66,14 @@ export const useAuthStore = create(
           };
         });
       },
+      setHasHydrated: (value: boolean) => {
+        set((state) => {
+          return {
+            ...state,
+            _hasHydrated: value,
+          };
+        });
+      },
     }),
     {
       name: "auth-store",
@@ -71,6 +82,9 @@ export const useAuthStore = create(
         getItem,
         removeItem: deleteItemAsync,
       })),
+      onRehydrateStorage: (state) => {
+        return () => state.setHasHydrated(true);
+      },
     },
   ),
 );
