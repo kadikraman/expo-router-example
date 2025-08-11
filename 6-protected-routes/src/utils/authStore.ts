@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { getItem, setItem, deleteItemAsync } from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
+
+const isWeb = Platform.OS === "web";
 
 type UserState = {
   isLoggedIn: boolean;
@@ -77,13 +80,18 @@ export const useAuthStore = create(
     }),
     {
       name: "auth-store",
-      storage: createJSONStorage(() => ({
-        setItem,
-        getItem,
-        removeItem: deleteItemAsync,
-      })),
-      onRehydrateStorage: (state) => {
-        return () => state.setHasHydrated(true);
+      storage: isWeb
+        ? createJSONStorage(() => localStorage)
+        : createJSONStorage(() => ({
+            setItem: (key: string, value: string) =>
+              SecureStore.setItemAsync(key, value),
+            getItem: (key: string) => SecureStore.getItemAsync(key),
+            removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+          })),
+      onRehydrateStorage: () => {
+        return (state) => {
+          state?.setHasHydrated(true);
+        };
       },
     },
   ),
