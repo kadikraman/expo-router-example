@@ -3,8 +3,13 @@ import "../../global.css";
 import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useAuthStore } from "@/utils/authStore";
+import { Platform } from "react-native";
 
-SplashScreen.preventAutoHideAsync();
+const isWeb = Platform.OS === "web";
+
+if (!isWeb) {
+  SplashScreen.preventAutoHideAsync();
+}
 
 export default function RootLayout() {
   const {
@@ -22,7 +27,7 @@ export default function RootLayout() {
     }
   }, [_hasHydrated]);
 
-  if (!_hasHydrated) {
+  if (!_hasHydrated && !isWeb) {
     return null;
   }
 
